@@ -3,6 +3,8 @@
 
 import re
 import json
+import snowballstemmer
+
 
 gruene = open('data/gruene.txt', encoding='utf-8')
 gruene = gruene.read()
@@ -86,16 +88,34 @@ counted_gruene = counting_words(gruene_final)
 print('counted: ', list(counted_gruene.values())[:10])
 
 
+stemmer = snowballstemmer.stemmer('german');
+
+def group_by_stem(words):
+    stemmed_words = {}
+    for word in words.keys():
+        stemmed = stemmer.stemWord(word)
+        if stemmed in stemmed_words:
+            if words[word] > stemmed_words[stemmed]['single_count']:
+                stemmed_words[stemmed]['word'] = word
+                stemmed_words[stemmed]['single_count'] = words[word]
+            stemmed_words[stemmed]['count'] += words[word]
+        else:
+            stemmed_words[stemmed] = {'word': word, 'single_count': words[word], 'count': words[word]}  
+    return stemmed_words
+    
+stemmed_gruene = group_by_stem(counted_gruene)
+
+# print(stemmed_gruene)
+
 def sort_counted_words(words):
-    words_list_dict = [{'word':key, 'count':words[key]} for key in words.keys()]
+    words_list_dict = [{'word':words[key]['word'], 'count':words[key]['count']} for key in words.keys()]
     return sorted(words_list_dict, key=lambda x: x['count'], reverse=True)
 
-sorted_gruene = sort_counted_words(counted_gruene)
+sorted_gruene = sort_counted_words(stemmed_gruene)
 
 print('sorted: ', sorted_gruene[:10])
 
 output = json.dumps({ 'data': sorted_gruene }, ensure_ascii=False)
-print(output)
 
 out_file = open('output/gruene.json', 'w')
 out_file.write(output)
