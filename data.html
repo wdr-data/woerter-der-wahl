@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Data</title>
+</head>
+<body>
+    <table>
+    {% for entry in data %}
+        <tr>
+            <td>{{ entry.word }}</td>
+            <td>{{ entry.count }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+</body>
+</html>

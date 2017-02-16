@@ -1,13 +1,12 @@
-#! python3
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import re
-from collections import Counter
-from textblob_de import TextBlobDE as TextBlob
-from nltk import * 
+import json
 
-gruene = open('gruene.txt')
+gruene = open('data/gruene.txt')
 gruene = gruene.read()
+
 
 def splitting_into_words(text):
     return re.split('\s+', text)
@@ -16,8 +15,10 @@ gruene_words = splitting_into_words(gruene)
 
 print("words: ", gruene_words[:10])
 
+
 def test_capital_words(item):
     return re.match('^[A-Z]', item)
+
 
 def filter_capital_words(words):
     return list(filter(test_capital_words, words))
@@ -26,8 +27,10 @@ gruene_capital_words = filter_capital_words(gruene_words)
 
 print("capital: ", gruene_capital_words[:10])
 
+
 def make_clean_word(word):
     return re.sub("[^a-züäöß]", '', word, flags=re.IGNORECASE)
+
 
 def clean_words(words):
     return list(map(make_clean_word, words))
@@ -35,6 +38,7 @@ def clean_words(words):
 gruene_capital_words_clean = clean_words(gruene_capital_words)
 
 print('clean: ', gruene_capital_words_clean[:10])
+
 
 def delete_stop_words(words): 
     stopwords = ('Die', 'Der', 'Mit', 'Diese', 'Deshalb', 'Mit', 'Für', 
@@ -47,6 +51,7 @@ def delete_stop_words(words):
 gruene_final = delete_stop_words(gruene_capital_words)
 
 print('final: ', gruene_final[:10])
+
 
 def counting_words(words):
     counted_words = {}
@@ -61,6 +66,7 @@ counted_gruene = counting_words(gruene_final)
 
 print('counted: ', list(counted_gruene.values())[:10])
 
+
 def sort_counted_words(words):
     words_list_dict = [{'word':key, 'count':words[key]} for key in words.keys()]
     return sorted(words_list_dict, key=lambda x: x['count'], reverse=True)
@@ -68,3 +74,9 @@ def sort_counted_words(words):
 sorted_gruene = sort_counted_words(counted_gruene)
 
 print('sorted: ', sorted_gruene[:10])
+
+output = json.dumps({ 'data': sorted_gruene }, ensure_ascii=False)
+
+out_file = open('output/gruene.json', 'w')
+out_file.write(output)
+out_file.close()

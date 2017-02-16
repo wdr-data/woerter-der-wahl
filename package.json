@@ -1,0 +1,26 @@
+{
+  "name": "woerter-der-wahl",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.23.1",
+    "babel-preset-es2015": "^6.22.0",
+    "browser-sync": "^2.18.8",
+    "d3": "^4.5.0",
+    "gulp": "^3.9.1",
+    "gulp-data": "^1.2.1",
+    "gulp-load-plugins": "^1.5.0",
+    "gulp-swig": "^0.8.0",
+    "python-shell": "^0.4.0",
+    "webpack": "^2.2.1",
+    "webpack-dev-middleware": "^1.10.0",
+    "webpack-hot-middleware": "^2.17.0",
+    "webpack-stream": "^3.2.0"
+  }
+}
