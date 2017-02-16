@@ -48,7 +48,7 @@ def delete_stop_words(words):
                 'Ihnen', 'Als', 'UND', 'Und', 'Wir')
     return [w for w in words if w not in stopwords]
     
-gruene_final = delete_stop_words(gruene_capital_words)
+gruene_final = delete_stop_words(gruene_capital_words_clean)
 
 print('final: ', gruene_final[:10])
 
