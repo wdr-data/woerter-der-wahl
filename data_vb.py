@@ -29,7 +29,7 @@ print("capital: ", gruene_capital_words[:10])
 
 
 def make_clean_word(word):
-    return re.sub("[^a-züäöß]", '', word, flags=re.IGNORECASE)
+    return re.sub("r'[^a-züäöß]", '', word, flags=re.IGNORECASE)
 
 
 def clean_words(words):
@@ -45,7 +45,7 @@ def delete_stop_words(words):
                  'Eine', 'Unsere', 'Ein', 'Das', 'Sie', 'In', 'Dazu', 
                  'Mio', 'Gut', 'Kein', 'Nur', 'FÜR', 'Dafür', 'Denn', 'Darum',
                 'Es', 'Im', 'DIE', 'Auch', 'Den', 'Daher', 'Damit', 'Um', 'Dies', 
-                'Ihnen', 'Als', 'UND', 'Und', 'Wir')
+                'Ihnen', 'Als', 'UND', 'Und', 'Wir', 'Durch', 'So', 'Dem', 'Zudem', 'Viel', 'Dabei')
     return [w for w in words if w not in stopwords]
     
 gruene_final = delete_stop_words(gruene_capital_words_clean)
