@@ -6,7 +6,9 @@ const $ = gulpPlugins();
 const dist = 'build';
 
 gulp.task('data', cb => {
-    PythonShell.run('data_vb.py', cb);
+    PythonShell.run('data_vb.py', {
+        pythonPath: 'python3'
+    }, cb);
 });
 
 gulp.task('data-vis', ['data'], () => {
