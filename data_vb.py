@@ -29,6 +29,15 @@ gruene_capital_words = filter_capital_words(gruene_words)
 print("capital: ", gruene_capital_words[:10])
 
 
+def filter_small_word(word):
+    return len(word) > 2
+    
+
+def long_words(words):
+    return list(filter(filter_small_word, words))
+
+gruene_len_words = long_words(gruene_capital_words)
+
 def make_clean_word(word):
     return re.sub("\W", '', word)
 
@@ -36,7 +45,7 @@ def make_clean_word(word):
 def clean_words(words):
     return list(map(make_clean_word, words))
 
-gruene_capital_words_clean = clean_words(gruene_capital_words)
+gruene_capital_words_clean = clean_words(gruene_len_words)
 
 print('clean: ', gruene_capital_words_clean[:10])
 
