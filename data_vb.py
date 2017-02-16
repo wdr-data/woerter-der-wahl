@@ -30,7 +30,7 @@ print("capital: ", gruene_capital_words[:10])
 
 
 def filter_small_word(word):
-    return len(word) > 2
+    return len(word) > 1
     
 
 def long_words(words):
