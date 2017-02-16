@@ -9,6 +9,7 @@ gruene = gruene.read()
 
 
 def splitting_into_words(text):
+    text = re.sub("-\n", '', text)
     return re.split('\s+', text)
 
 gruene_words = splitting_into_words(gruene)
@@ -29,7 +30,7 @@ print("capital: ", gruene_capital_words[:10])
 
 
 def make_clean_word(word):
-    return re.sub("r'[^a-züäöß]", '', word, flags=re.IGNORECASE)
+    return re.sub("\W", '', word)
 
 
 def clean_words(words):
