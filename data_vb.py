@@ -4,7 +4,7 @@
 import re
 import json
 
-gruene = open('data/gruene.txt')
+gruene = open('data/gruene.txt', encoding='utf-8')
 gruene = gruene.read()
 
 
@@ -77,6 +77,7 @@ sorted_gruene = sort_counted_words(counted_gruene)
 print('sorted: ', sorted_gruene[:10])
 
 output = json.dumps({ 'data': sorted_gruene }, ensure_ascii=False)
+print(output)
 
 out_file = open('output/gruene.json', 'w')
 out_file.write(output)
