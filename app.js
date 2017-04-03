@@ -10,6 +10,5 @@ import BubbleCloud from './lib/bubble_cloud';
         });
     }
 
-    const chart = BubbleCloud();
-    chart("#bubble_cloud", exampleData);
+    BubbleCloud()("#bubble_cloud", exampleData);
 })();
