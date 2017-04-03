@@ -68,6 +68,6 @@ gulp.task('data-vis', ['data'], () => {
         .pipe(gulp.dest(dist));
 });
 
-gulp.task('build', ['scripts', 'copy:dist']);
+gulp.task('build', ['styles', 'scripts', 'copy:dist']);
 
 gulp.task('default', ['build']);
