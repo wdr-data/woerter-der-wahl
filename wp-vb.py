@@ -53,7 +53,7 @@ for index, paragraph in enumerate(paragraphs):
     end = 0
     while len(current_paragraph) > 0 and counter < 1000:
         current_paragraph = current_paragraph[end:]
-        pos = re.search(r'[\s\.\,\?\!\:\"\'\“]+', current_paragraph)
+        pos = re.search(r'[\s\.\,\?\!\:\"\']+', current_paragraph)
         if pos is None:
             end = len(current_paragraph)
             word = current_paragraph
