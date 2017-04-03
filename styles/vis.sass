@@ -1,4 +1,12 @@
+@mixin fulllayer
+  top: 0
+  left: 0
+  bottom: 0
+  right: 0
+
 #bubble_cloud
+  position: relative
+
   .bubble
     fill: #ccc
 
@@ -7,3 +15,14 @@
 
     &.selected
       opacity: 1
+
+  .text-container
+    overflow: hidden
+    position: absolute
+    pointer-events: none
+    @include fulllayer
+
+    .word
+      position: absolute
+      text-align: center
+      vertical-align: middle
