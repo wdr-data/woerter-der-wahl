@@ -1,15 +1,16 @@
-#! /usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import re
+import pandas as pd
 import sys
 import json
 from pprint import pprint
-import snowballstemmer
+# import snowballstemmer
+
+
+file = open("37lpt2015_grundsatzprogramm_cdu_nrw.txt", "r", encoding='utf-8')
 
 paragraphs = []
 
-with open('data/gruene.txt') as f:
+with open('37lpt2015_grundsatzprogramm_cdu_nrw.txt') as f:
     container = ''
     for line in f:
         line = line.replace('\n', '')
@@ -24,7 +25,7 @@ with open('data/gruene.txt') as f:
             container = ''
 
 def splitting_into_words(text):
-    return re.split('[\s\.\,\?\!\"\']+', text)
+    return re.split('[\s\.\,\?\!]+', text)
 
 def test_stopwords(word):
     stopwords = ('Die', 'Der', 'Mit', 'Diese', 'Deshalb', 'Mit', 'Für',
@@ -45,7 +46,6 @@ def test_stopwords(word):
 
 counted_words = {}
 word_count = 0
-stemmer = snowballstemmer.stemmer('german')
 
 for index, paragraph in enumerate(paragraphs):
     current_paragraph = paragraph
@@ -53,7 +53,7 @@ for index, paragraph in enumerate(paragraphs):
     end = 0
     while len(current_paragraph) > 0 and counter < 1000:
         current_paragraph = current_paragraph[end:]
-        pos = re.search(r'[\s\.\,\?\!\:\"\']+', current_paragraph)
+        pos = re.search(r'[\s\.\,\?\!\:]+', current_paragraph)
         if pos is None:
             end = len(current_paragraph)
             word = current_paragraph
@@ -67,16 +67,14 @@ for index, paragraph in enumerate(paragraphs):
             counter += end
             continue
         word_count += 1
-        stemmed = stemmer.stemWord(word)
         if word in counted_words.keys():
             counted_words[word]['count'] += 1
         else:
-            counted_words[word] = {'count': 1, 'stem': stemmed, 'stem_count': 1}
-        if stemmed in counted_words[word]['stem']:
-            counted_words[word]['stem_count'] += 1
+            counted_words[word] = {'count': 1}
         if 'occurence' not in counted_words[word].keys():
             counted_words[word]['occurence'] = []
         counted_words[word]['occurence'].append({'paragraph_index': index, 'position': counter})
         counter += end
+
 
 pprint(counted_words)
