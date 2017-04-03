@@ -3,14 +3,12 @@ import pandas as pd
 import sys
 import json
 from pprint import pprint
-# import snowballstemmer
+import snowballstemmer
 
-
-file = open("37lpt2015_grundsatzprogramm_cdu_nrw.txt", "r", encoding='utf-8')
 
 paragraphs = []
 
-with open('37lpt2015_grundsatzprogramm_cdu_nrw.txt') as f:
+with open('data/gruene.txt') as f:
     container = ''
     for line in f:
         line = line.replace('\n', '')
@@ -20,12 +18,9 @@ with open('37lpt2015_grundsatzprogramm_cdu_nrw.txt') as f:
             paragraphs.append(line)
             continue
         container += line + ' '
-        if line.endswith('.'):
+        if re.search(r'[\s\.\,\?\!\"\'\“):]$', line):
             paragraphs.append(container[:-1])
             container = ''
-
-def splitting_into_words(text):
-    return re.split('[\s\.\,\?\!]+', text)
 
 def test_stopwords(word):
     stopwords = ('Die', 'Der', 'Mit', 'Diese', 'Deshalb', 'Mit', 'Für',
@@ -41,7 +36,8 @@ def test_stopwords(word):
                 'Dennoch', 'Noch', 'Keine', 'Vom', 'Jetzt', 'Diejenigen', 'Gegen', 'Unter', 'Einzelnen',
                 'Jeder', 'Zweiten', 'Leider', 'Kurz', 'Vielerorts', 'Unterschiedliche', 'Eines', 'Bislang',
                 'Somit', 'Sowohl', 'Zuvor', 'Während', 'Jedem', 'Gleiches', 'Drei', 'Einer', 'Solche',
-                'Dritten', 'Klein', 'Stattdessen', 'Gute', 'Ver', 'Innen', 'Erstes', 'Ihrem', 'Groß')
+                'Dritten', 'Klein', 'Stattdessen', 'Gute', 'Ver', 'Innen', 'Erstes', 'Ihrem', 'Groß',
+                'NRW', 'Nordrhein-Westfalen')
     return word in stopwords
 
 counted_words = {}
@@ -53,7 +49,7 @@ for index, paragraph in enumerate(paragraphs):
     end = 0
     while len(current_paragraph) > 0 and counter < 1000:
         current_paragraph = current_paragraph[end:]
-        pos = re.search(r'[\s\.\,\?\!\:]+', current_paragraph)
+        pos = re.search(r'[\s\.\,\?\!\"\'\“):]+', current_paragraph)
         if pos is None:
             end = len(current_paragraph)
             word = current_paragraph
@@ -76,5 +72,28 @@ for index, paragraph in enumerate(paragraphs):
         counted_words[word]['occurence'].append({'paragraph_index': index, 'position': counter})
         counter += end
 
+stemmer = snowballstemmer.stemmer('german')
 
-pprint(counted_words)
+def group_by_stem(words):
+    stemmed_words = {}
+    for word in words.keys():
+        stemmed = stemmer.stemWord(word)
+        if stemmed in stemmed_words:
+            if words[word]['count'] > stemmed_words[stemmed]['single_count']:
+                stemmed_words[stemmed]['word'] = word
+                stemmed_words[stemmed]['single_count'] = words[word]['count']
+            stemmed_words[stemmed]['count'] += words[word]['count']
+            stemmed_words[stemmed]['occurence'] += words[word]['occurence']
+        else:
+            stemmed_words[stemmed] = {'word': word, 'single_count': words[word]['count'], 'count': words[word]['count'], 'occurence': words[word]['occurence']}
+    return stemmed_words
+
+stemmed = group_by_stem(counted_words)
+
+def sort_counted_words(words):
+    words_list_dict = [words[key] for key in words.keys()]
+    return sorted(words_list_dict, key=lambda x: x['count'], reverse=True)
+
+words_sorted = sort_counted_words(stemmed)
+
+pprint(words_sorted[:30])
