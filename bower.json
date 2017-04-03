@@ -1,0 +1,21 @@
+{
+  "name": "woerter-der-wahl",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "Marcus Weiner <marcus.weiner@gmail.com>",
+    "Patricia Ennenbach <ennenbach@worthandlung.de>"
+  ],
+  "license": "None",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "normalize-css": "^6.0.0"
+  }
+}

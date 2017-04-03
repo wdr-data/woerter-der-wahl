@@ -1,4 +1,5 @@
 import gulp from 'gulp';
+import path from 'path';
 import browserSync from 'browser-sync';
 import webpack from 'webpack';
 import webpackStream from 'webpack-stream';
@@ -15,6 +16,12 @@ const webpackBundler = webpack(webpackConfigDev);
 
 const dist = 'build';
 
+gulp.task('styles', () => gulp.src('styles/main.sass')
+    .pipe($.sass())
+    .pipe(gulp.dest(path.join('.tmp', 'styles')))
+    .pipe(gulp.dest(path.join(dist, 'styles')))
+);
+
 gulp.task('scripts', () => gulp.src('app.js')
     .pipe(webpackStream(webpackConfig, webpack))
     .pipe(gulp.dest(dist))
@@ -24,10 +31,10 @@ gulp.task('copy:dist', () => gulp.src(['index.html'])
     .pipe(gulp.dest(dist))
 );
 
-gulp.task('serve', () => {
+gulp.task('serve', ['styles'], () => {
     browserSync.init({
         server: {
-            baseDir: './',
+            baseDir: ['.tmp', './'],
 
             middleware: [
                 webpackDevMiddleware(webpackBundler, {
@@ -45,6 +52,7 @@ gulp.task('serve', () => {
     });
 
     gulp.watch(['*.html', '*.js'], browserSync.reload);
+    gulp.watch('styles/**', ['styles', browserSync.reload]);
 });
 
 gulp.task('data', cb => {
