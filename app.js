@@ -2,7 +2,7 @@ import BubbleCloud from './lib/bubble_cloud';
 
 (function() {
     const exampleData = [];
-    for(let i = 0; i < 40; i++) {
+    for(let i = 0; i < 30; i++) {
         exampleData.push({
             id: i,
             word: "test",
