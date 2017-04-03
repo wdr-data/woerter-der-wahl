@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const prod = require('./webpack.config');
 
 module.exports = Object.assign({}, prod, {
-    devtool: '#eval-source-map',
+    devtool: 'cheap-source-map',
 
     module: {},
 
