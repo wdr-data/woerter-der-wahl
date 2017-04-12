@@ -94,6 +94,12 @@ gulp.task('images', function() {
         .pipe(gulp.dest(path.join(dist, 'images')));
 });
 
+gulp.task('copy:dist', () => gulp.src([
+        'bower_components/jquery/dist/jquery.min.js',
+    ], { base: './' })
+        .pipe(gulp.dest(dist))
+);
+
 gulp.task('data', cb => {
     PythonShell.run('wp-vb.py', {
         pythonPath: 'python3'
@@ -108,6 +114,6 @@ gulp.task('data-vis', ['data'], () => gulp.src('data.html')
         .pipe(gulp.dest(dist))
 );
 
-gulp.task('build', ['data:prod', 'scripts', 'html', 'fonts', 'images']);
+gulp.task('build', ['data:prod', 'copy:dist', 'scripts', 'html', 'fonts', 'images']);
 
 gulp.task('default', ['build']);
