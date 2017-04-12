@@ -61,6 +61,8 @@ gulp.task('data', cb => {
     }, cb);
 });
 
+gulp.task('data:prod', ['data'], () => gulp.src('output/**/*').pipe(gulp.dest(path.join(dist, 'output'))));
+
 gulp.task('data-vis', ['data'], () => {
     return gulp.src('data.html')
         .pipe($.data(() => require('./output/gruene.json')))
@@ -68,6 +70,6 @@ gulp.task('data-vis', ['data'], () => {
         .pipe(gulp.dest(dist));
 });
 
-gulp.task('build', ['data', 'styles', 'scripts', 'copy:dist']);
+gulp.task('build', ['data:prod', 'styles', 'scripts', 'copy:dist']);
 
 gulp.task('default', ['build']);
