@@ -6,6 +6,10 @@ import json
 from pprint import pprint
 import snowballstemmer
 
+def add_share(entries, wordsum):
+    for word in entries.keys():
+        entries[word]['share'] = round(entries[word]['count'] / wordsum, 5)
+
 def analyze(paragraphs):
 
     def test_stopwords(word):
@@ -76,16 +80,13 @@ def analyze(paragraphs):
 
     stemmed = group_by_stem(counted_words)
 
-    for word in stemmed.keys():
-        stemmed[word]['share'] =  round(stemmed[word]['count'] / word_count, 5)
+    add_share(stemmed, word_count)
 
     def sort_counted_words(words):
         words_list_dict = [words[key] for key in words.keys()]
         return sorted(words_list_dict, key=lambda x: x['count'], reverse=True)
 
     words_sorted = sort_counted_words(stemmed)
-
-    pprint(words_sorted[:30])
     return words_sorted
 
 def save_text(lines, party):
@@ -95,11 +96,36 @@ def save_text(lines, party):
     out_file.close()
 
 def save_json(obj, party):
-    output = json.dumps({'data': result }, ensure_ascii=False)
+    output = json.dumps({'data': obj }, ensure_ascii=False)
 
     out_file = open('output/'+ str(party) +'.json', 'w')
     out_file.write(output)
     out_file.close()
+
+results_sum = {}
+wordcount_sum = 0
+
+def append_result(result, party):
+    global wordcount_sum
+
+    for entry in result:
+        word = entry['word']
+        if word not in results_sum:
+            results_sum[word] = {
+                'word': word,
+                'count': 0,
+                'share': 0,
+                'segments': {}
+            }
+
+        wordcount_sum += entry['count']
+        results_sum[word]['count'] += entry['count']
+        results_sum[word]['segments'][party] = entry
+
+def get_result_sum():
+    add_share(results_sum, wordcount_sum)
+    # turn results_sum dict into list
+    return sorted(results_sum.values(), key=lambda x: x['count'], reverse=True)
 
 if __name__=="__main__":
     files_from_doc = ['gruene', 'spd', 'fdp']
@@ -125,7 +151,8 @@ if __name__=="__main__":
                     paragraphs.append(container[:-1])
                     container = ''
         result = analyze(paragraphs)
-        save_json(result,path)
+        append_result(result, path)
+        #save_json(result,path)
         save_text(paragraphs,path)
 
     for path in files_from_doc:
@@ -138,5 +165,10 @@ if __name__=="__main__":
                 paragraphs.append(line)
 
         result = analyze(paragraphs)
-        save_json(result,path)
+        append_result(result, path)
+        #save_json(result,path)
         save_text(paragraphs,path)
+
+    results = get_result_sum()
+    save_json(results, 'all')
+    print("✅ Done")
