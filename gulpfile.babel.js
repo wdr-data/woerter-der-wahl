@@ -108,6 +108,6 @@ gulp.task('data-vis', ['data'], () => gulp.src('data.html')
         .pipe(gulp.dest(dist))
 );
 
-gulp.task('build', ['data:prod', 'scripts', 'html', 'fonts']);
+gulp.task('build', ['data:prod', 'scripts', 'html', 'fonts', 'images']);
 
 gulp.task('default', ['build']);
