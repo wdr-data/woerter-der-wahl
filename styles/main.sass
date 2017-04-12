@@ -1,3 +1,29 @@
+*
+  box-sizing: border-box
+
 @import "../bower_components/normalize-css/normalize.css"
+@import "fonts.css"
+@import "variables"
+@import "icons"
+@import "globals"
+
+@import "header"
+@import "breadcrumb"
+@import "footer"
+
 @import "vis"
+
+#content
+  overflow: hidden
+
+  &.container
+    padding: 0
+    margin: 0 auto
+    background: white
+
+@media (max-width: $bp-md)
+  .container
+    padding-left: 10px
+    padding-right: 10px
+
 

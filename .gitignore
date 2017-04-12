@@ -2,6 +2,7 @@ node_modules/
 bower_components/
 output/
 build/
+fonts/
 .tmp/
 .venv/
 

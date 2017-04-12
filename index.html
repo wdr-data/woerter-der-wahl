@@ -3,11 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Wörter der Wahl</title>
+    <link rel="shortcut icon" href="https://www1.wdr.de/resources/img/favicon.ico"/>
+    <link rel="icon" href="https://www1.wdr.de/resources/img/favicon.ico"/>
+
+    <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+
 </head>
 <body>
-    <div class="bubble_cloud" id="bubble_cloud1"></div>
 
-    <script src="/bundle.js"></script>
+{% include "partials/header.html" with { active: 'nachrichten' } %}
+
+<article id="content" class="container">
+    <div class="bubble_cloud" id="bubble_cloud1"></div>
+</article>
+
+{% include "partials/breadcrumb.html" %}
+{% include "partials/footer.html" %}
+
+<script src="/bundle.js"></script>
+
 </body>
 </html>

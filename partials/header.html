@@ -1,0 +1,120 @@
+{% set ressorts = [
+    {
+        url: "https://www1.wdr.de/nachrichten/index.html",
+        title: "Nachrichten",
+        id: "nachrichten"
+    },
+    {
+        url: "https://www1.wdr.de/sport/index.html",
+        title: "Sport",
+        id: "sport"
+    },
+    {
+        url: "https://www1.wdr.de/wissen/index.html",
+        title: "Wissen",
+        id: "wissen"
+    },
+    {
+        url: "https://www1.wdr.de/verbraucher/index.html",
+        title: "Verbraucher",
+        id: "verbraucher"
+    },
+    {
+        url: "https://www1.wdr.de/kultur/index.html",
+        title: "Kultur",
+        id: "kultur"
+    },
+    {
+        url: "https://www1.wdr.de/unterhaltung/index.html",
+        title: "Unterhaltung",
+        id: "unterhaltung"
+    }
+] %}
+
+<div id="header">
+    <div class="container">
+        <a class="hidden" name="goToHead"></a>
+        <ul id="skipLinks" class="hidden">
+            <li>
+                <a href="#goToContent">zum Inhalt</a>
+            </li>
+            <li>
+                <a href="#wdrNavi">zur Navigation</a>
+            </li>
+            <li>
+                <a href="#wdrSuche">zur Suche</a>
+            </li>
+        </ul>
+        <div role="banner" class="logo">
+            <a href="https://www1.wdr.de/index.html">
+                <img alt="zu Startseite WDR"
+                     src="images/wdr_logo.svg"
+                     title="zu Startseite WDR"/>
+            </a>
+        </div>
+
+        <input type="checkbox" id="searchState" class="hidden">
+        <input type="checkbox" id="naviState" class="hidden">
+
+        <div class="pull-right mobileButtons">
+            <label class="icon search mobileButton searchToggle" for="searchState">Suche</label>
+            <label class="icon hamburger mobileButton naviToggle" for="naviState">Menü</label>
+        </div>
+        <div class="pull-right toolsTop">
+            <ul class="servicenavi" role="navigation">
+                <li>
+                    <a class="icon weather" href="https://www1.wdr.de/wetter/index.html" title="Startseite Wetter">
+                        <span>Wetter</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="icon traffic" href="https://www1.wdr.de/verkehr/index.html" title="Startseite Verkehr">
+                        <span>Verkehr</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div role="search" class="searchBox">
+                <a id="wdrSuche" class="hidden"></a>
+                <form name="form_ab4f1660-3f7b-4072-820d-b198e24cbab8-id"
+                      class="searchForm"
+                      method="post"
+                      action="https://www1.wdr.de/suche/wdrsuchseite100.jsp">
+                    <input class="searchInput"
+                           name="q"
+                           type="text"
+                           placeholder="im WDR suchen"/>
+                    <button class="icon search"></button>
+                </form>
+            </div>
+        </div>
+        <div class="naviCont">
+            <div class="subnavi" role="navigation">
+                <a class="hidden" name="wdrNavi" id="wdrNavi"></a>
+                <ul class="ressorts">
+                    {% for ressort in ressorts %}
+                    <li>
+                        <a href="{{ ressort.url }}"
+                            {% if ressort.id == active %}class="active"{% endif %}>
+                            {{ ressort.title }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="masternavi" role="navigation">
+                <ul>
+                    <li>
+                        <a href="https://www1.wdr.de/mediathek/index.html">Mediathek</a>
+                    </li>
+                    <li>
+                        <a href="https://www1.wdr.de/fernsehen/index.html">Fernsehen</a>
+                    </li>
+                    <li>
+                        <a href="https://www1.wdr.de/radio/index.html">Radio</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
