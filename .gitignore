@@ -3,6 +3,7 @@ bower_components/
 output/
 build/
 .tmp/
+.venv/
 
 *.odt
 *.docx

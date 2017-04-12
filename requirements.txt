@@ -1,1 +1,1 @@
-snowballstemmer
+snowballstemmer==1.2.1

@@ -56,7 +56,7 @@ gulp.task('serve', ['styles'], () => {
 });
 
 gulp.task('data', cb => {
-    PythonShell.run('data_vb.py', {
+    PythonShell.run('wp-vb.py', {
         pythonPath: 'python3'
     }, cb);
 });
@@ -68,6 +68,6 @@ gulp.task('data-vis', ['data'], () => {
         .pipe(gulp.dest(dist));
 });
 
-gulp.task('build', ['styles', 'scripts', 'copy:dist']);
+gulp.task('build', ['data', 'styles', 'scripts', 'copy:dist']);
 
 gulp.task('default', ['build']);
