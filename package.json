@@ -15,7 +15,6 @@
     "babel-register": "^6.23.0",
     "browser-sync": "^2.18.8",
     "css-url-parser": "^1.1.2",
-    "d3": "^4.5.0",
     "gulp": "^3.9.1",
     "gulp-clean-css": "^3.0.4",
     "gulp-cssimport": "^5.0.0",
@@ -35,5 +34,8 @@
     "webpack-dev-middleware": "^1.10.0",
     "webpack-hot-middleware": "^2.17.0",
     "webpack-stream": "^3.2.0"
+  },
+  "dependencies": {
+    "d3": "^4.7.4"
   }
 }
