@@ -6,15 +6,17 @@
 
 .bubble_cloud
   position: relative
+  height: 500px
+  background: $wdr-blue
 
   .bubble
-    fill: #ccc
+    fill: $neutral-color
+    cursor: pointer
 
-  .selection-active .bubble
-    opacity: 0.3
-
-    &.selected
-      opacity: 1
+    &:hover
+      fill: darken($neutral-color, 20%)
+      stroke: #444444
+      stroke-width: 1px
 
   .text-container
     overflow: hidden
@@ -23,6 +25,36 @@
     @include fulllayer
 
     .word
+      user-select: none
       position: absolute
       text-align: center
       vertical-align: middle
+
+  .center-border
+    fill: none
+    stroke-width: 2px
+
+  // selected state
+  &.selection-active
+    .bubble
+      opacity: 0.1
+
+      &.selected
+        opacity: 1
+        cursor: auto
+
+        &:hover
+          fill: $neutral-color
+          stroke: none
+
+    .word
+      opacity: 0.1
+      color: white
+
+      &.selected
+        opacity: 1
+        color: inherit
+
+    .center-border
+      stroke: $neutral-color
+      opacity: 0.1
