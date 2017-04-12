@@ -1,4 +1,5 @@
 import BubbleCloud from './lib/bubble_cloud';
+import _ from 'lodash';
 
 (function() {
     fetch('output/all.json')
@@ -9,7 +10,8 @@ import BubbleCloud from './lib/bubble_cloud';
             BubbleCloud()("#bubble_cloud1", bubbles.map((item, key) => { return {
                 id: key,
                 word: item.word,
-                count: item.share
+                count: item.share,
+                party_counts: _.mapValues(item.segments, d => d.share)
             }; }));
         });
 })();
