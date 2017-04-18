@@ -1,0 +1,13 @@
+Von Patricia Ennenbach und Marcus Weiner
+
+Design: Mirko Schweikert
+
+Redaktion: Torsten Fischer, Rainer Kellers
+
+Credits:
+Wörter der Wahl orientiert sich an einer Vorlage der New York Times:
+http://www.nytimes.com/interactive/2012/09/04/us/politics/democratic-convention-words.html?_r=0
+
+Ein Dank an Mike Bostock: https://d3js.org/
+
+Um Füllwörter auszusortieren, die keine Bedeutung tragen, haben wir diese deutsche Stopword-Liste verwendet: https://github.com/solariz/german_stopwords/blob/master/german_stopwords_plain.txt
