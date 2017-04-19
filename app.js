@@ -10,7 +10,8 @@ import _ from 'lodash';
             BubbleCloud()("#bubble_cloud1", bubbles.map((item, key) => { return {
                 id: key,
                 word: item.word,
-                count: item.share,
+                count: item.count,
+                share: item.share,
                 party_counts: _.mapValues(item.segments, d => d.share)
             }; }));
         });
