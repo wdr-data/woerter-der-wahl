@@ -157,7 +157,7 @@ if __name__=="__main__":
                     container = ''
         result = analyze(paragraphs)
         append_result(result, path)
-        #save_json(result,path)
+        save_json(result,path)
         save_text(paragraphs,path)
 
     for path in files_from_doc:
@@ -172,7 +172,7 @@ if __name__=="__main__":
 
         result = analyze(paragraphs)
         append_result(result, path)
-        #save_json(result,path)
+        save_json(result,path)
         save_text(paragraphs,path)
 
     results = get_result_sum()
