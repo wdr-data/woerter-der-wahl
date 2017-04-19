@@ -75,7 +75,7 @@ def analyze(paragraphs):
                 stemmed_words[stemmed]['count'] += words[word]['count']
                 stemmed_words[stemmed]['occurence'] += words[word]['occurence']
             else:
-                stemmed_words[stemmed] = {'word': word, 'single_count': words[word]['count'], 'count': words[word]['count'], 'occurence': words[word]['occurence']}
+                stemmed_words[stemmed] = {'word': word, 'stem': stemmed, 'single_count': words[word]['count'], 'count': words[word]['count'], 'occurence': words[word]['occurence']}
         return stemmed_words
 
     stemmed = group_by_stem(counted_words)
@@ -109,18 +109,22 @@ def append_result(result, party):
     global wordcount_sum
 
     for entry in result:
-        word = entry['word']
-        if word not in results_sum:
-            results_sum[word] = {
-                'word': word,
+        stem = entry['stem']
+        if stem not in results_sum:
+            results_sum[stem] = {
+                'word': entry['word'],
+                'stem': stem,
                 'count': 0,
-                'share': 0,
+                'single_count': 0,
                 'segments': {}
             }
 
         wordcount_sum += entry['count']
-        results_sum[word]['count'] += entry['count']
-        results_sum[word]['segments'][party] = entry
+        results_sum[stem]['count'] += entry['count']
+        results_sum[stem]['segments'][party] = entry
+        if entry['count'] > results_sum[stem]['single_count']:
+            results_sum[stem]['word'] = entry['word']
+            results_sum[stem]['single_count'] = entry['count']
 
 def get_result_sum():
     add_share(results_sum, wordcount_sum)
