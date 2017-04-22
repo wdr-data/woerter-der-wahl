@@ -1,0 +1,44 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="_lib.html">
+
+<dom-module id="app-shell">
+    <template>
+        <link rel="stylesheet" href="../styles/app.css">
+
+        <div class="bubble_cloud" id="bubble_cloud1"></div>
+    </template>
+</dom-module>
+
+<script>
+    class AppShell extends Polymer.Element {
+        static get is() {
+            return 'app-shell';
+        }
+
+        static get properties() {
+            return {};
+        }
+
+        connectedCallback() {
+            super.connectedCallback();
+
+            const elem = this.shadowRoot.querySelector('#bubble_cloud1');
+
+            fetch('output/all.json')
+                .then(res => res.json())
+                .then(json => {
+                    const bubbles = json.data.slice(0, 30);
+
+                    BubbleCloud()(elem, bubbles.map((item, key) => { return {
+                        id: key,
+                        word: item.word,
+                        count: item.count,
+                        share: item.share,
+                        party_counts: _.mapValues(item.segments, d => d.share)
+                    }; }));
+                });
+        }
+    }
+
+    customElements.define(AppShell.is, AppShell);
+</script>

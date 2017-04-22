@@ -18,7 +18,7 @@ const webpackBundler = webpack(webpackConfigDev);
 
 const dist = 'build';
 
-gulp.task('styles', () => gulp.src('styles/main.sass')
+gulp.task('styles', () => gulp.src('styles/{main,app}.sass')
     .pipe($.sass())
     .pipe(gulp.dest(path.join('.tmp', 'styles')))
 );
@@ -52,7 +52,7 @@ gulp.task('html', ['styles', 'templates'], () => gulp.src(path.join('.tmp', 'ind
 gulp.task('fonts', () => dlFonts(path.join(dist, 'fonts')));
 gulp.task('fonts:develop', () => dlFonts('fonts'));
 
-gulp.task('scripts', () => gulp.src('app.js')
+gulp.task('scripts', () => gulp.src('lib/index.js')
     .pipe(webpackStream(webpackConfig, webpack))
     .pipe(gulp.dest(dist))
 );
@@ -70,16 +70,14 @@ gulp.task('serve', ['styles', 'templates', 'fonts:develop'], () => {
 
                     // pretty colored output
                     stats: { colors: true }
-                }),
-
-                webpackHotMiddleware(webpackBundler)
+                })
             ]
         }
     });
 
     gulp.watch('index.html', ['templates', browserSync.reload]);
     gulp.watch('styles/**', ['styles', browserSync.reload]);
-    gulp.watch(['*.js', 'lib/**/*.js'], browserSync.reload)
+    gulp.watch(['*.js', 'lib/**/*.js', 'elements/**/*'], browserSync.reload)
 });
 
 gulp.task('images', function() {
