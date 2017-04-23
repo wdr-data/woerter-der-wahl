@@ -4,12 +4,6 @@
   bottom: 0
   right: 0
 
-@mixin partyColors($prefix, $prop)
-  @each $party in $party-list
-    $i: index($party-list, $party)
-    #{$prefix}#{$party}
-      #{$prop}: nth($party-colors, $i)
-
 .bubble_cloud
   position: relative
   height: 500px

@@ -1,4 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="_lib.html">
 
 <dom-module id="app-shell">
@@ -6,17 +7,60 @@
         <link rel="stylesheet" href="../styles/app.css">
 
         <div class="bubble_cloud" id="bubble_cloud1"></div>
+
+        <div class$="content-wrapper party-[[ activeParty ]]">
+            <div class="tab-wrapper">
+                <div class="tab-bar">
+                    <iron-selector attr-for-selected="data-select"
+                                   selected="{{ activeParty }}"
+                                   fallback-selection="all"
+                                   class="clearfix">
+                        <div class="tab party-all" data-select="all">Alle</div>
+                        <template is="dom-repeat" items="[[ parties ]]">
+                            <div class$="tab party-[[ item ]]" data-select="[[ item ]]">[[ getPartyName(item) ]]</div>
+                        </template>
+                    </iron-selector>
+                </div>
+                <span class="topline"></span>
+            </div>
+        </div>
     </template>
 </dom-module>
 
 <script>
+    const partyMap = {
+        cdu: "CDU",
+        spd: "SPD",
+        gruene: "Grüne",
+        fdp: "FDP",
+        linke: "Linke",
+        piraten: "Piraten",
+        afd: "AFD"
+    };
+
     class AppShell extends Polymer.Element {
         static get is() {
             return 'app-shell';
         }
 
         static get properties() {
-            return {};
+            return {
+                parties: {
+                    type: Array,
+                    value: () => ['cdu', 'spd', 'linke', 'gruene', 'fdp', 'piraten', 'afd']
+                },
+                activeParty: {
+                    type: String
+                },
+                activeWord: {
+                    type: String,
+                    value: () => ""
+                },
+                partyMap: {
+                    type: Object,
+                    value: () => partyMap
+                }
+            };
         }
 
         connectedCallback() {
@@ -29,7 +73,7 @@
                 .then(json => {
                     const bubbles = json.data.slice(0, 30);
 
-                    BubbleCloud()(elem, bubbles.map((item, key) => { return {
+                    BubbleCloud(partyMap)(elem, bubbles.map((item, key) => { return {
                         id: key,
                         word: item.word,
                         count: item.count,
@@ -37,6 +81,10 @@
                         party_counts: _.mapValues(item.segments, d => d.share)
                     }; }));
                 });
+        }
+
+        getPartyName(slug) {
+            return partyMap[slug];
         }
     }
 

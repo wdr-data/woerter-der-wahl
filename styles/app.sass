@@ -7,3 +7,77 @@
 @import "globals"
 
 @import "vis"
+
+$content-margin: 20px
+
+.content-wrapper
+  .tab-wrapper
+    overflow: hidden
+
+    .tab-bar
+      background-color: $grey
+      text-align: center
+      display: inline-block
+      width: 100%
+
+    iron-selector
+      display: inline-block
+
+      &:after
+        display: inline
+
+  .tab
+    display: block
+    float: left
+    margin: 0
+    padding: 10px 20px
+    cursor: pointer
+    text-transform: uppercase
+    color: white
+    width: 100px
+    text-align: center
+    @include partyColors('&.party-', 'background-color')
+
+    &.party-all
+      background-color: $grey
+
+    &.party-all, &.party-fdp, &.party-piraten, &.party-afd
+      color: black
+
+    &.iron-selected
+      position: relative
+      font-weight: bold
+
+      &:after, &:before
+        top: 100%
+        left: 50%
+        border: solid transparent
+        content: " "
+        height: 0
+        width: 0
+        position: absolute
+        pointer-events: none
+
+      &:after
+        border-color: rgba(136, 183, 213, 0)
+        border-top-color: #88b7d5
+        border-width: 35px 50px
+        margin-left: -50px
+
+      @include partyColors('&.party-', 'border-top-color', ':after')
+      &.party-all:after
+        border-top-color: $grey
+
+      &:before
+        border-color: rgba(255, 255, 255, 0)
+        border-top-color: #ffffff
+        border-width: 45px 60px
+        margin-left: -60px
+
+  .topline
+    height: 5px
+    background-color: $grey
+    margin: 15px $content-margin 20px $content-margin
+    display: block
+
+  @include partyColors('&.party-', 'background-color', ' .topline')
