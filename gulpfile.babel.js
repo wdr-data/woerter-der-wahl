@@ -9,6 +9,7 @@ import PythonShell from 'python-shell';
 import gulpPlugins from 'gulp-load-plugins';
 import dlFonts from './scripts/fonts';
 import imageminJpegoptim from 'imagemin-jpegoptim';
+import merge from 'merge-stream';
 const $ = gulpPlugins();
 
 import webpackConfigDev from './webpack.config.dev';
@@ -92,9 +93,20 @@ gulp.task('images', function() {
         .pipe(gulp.dest(path.join(dist, 'images')));
 });
 
+gulp.task('elements', ['styles'], () => gulp.src('elements/**/*')
+    .pipe($.usemin({
+        path: './',
+        css: [
+            $.cssimport({ includePaths: ['styles'] }),
+            $.cleanCss(),
+            $.rev()
+        ]
+    }))
+    .pipe(gulp.dest(path.join(dist, 'elements')))
+);
+
 gulp.task('copy:dist', () => gulp.src([
-        'bower_components/jquery/dist/jquery.min.js',
-        'elements/**/*'
+        'bower_components/**/*.{js,html}'
     ], { base: './' })
         .pipe(gulp.dest(dist))
 );
@@ -113,6 +125,6 @@ gulp.task('data-vis', ['data'], () => gulp.src('data.html')
         .pipe(gulp.dest(dist))
 );
 
-gulp.task('build', ['data:prod', 'copy:dist', 'scripts', 'html', 'fonts', 'images']);
+gulp.task('build', ['data:prod', 'copy:dist', 'scripts', 'html', 'fonts', 'images', 'elements']);
 
 gulp.task('default', ['build']);
