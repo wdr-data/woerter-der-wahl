@@ -94,6 +94,7 @@ gulp.task('images', function() {
 
 gulp.task('copy:dist', () => gulp.src([
         'bower_components/jquery/dist/jquery.min.js',
+        'elements/**/*'
     ], { base: './' })
         .pipe(gulp.dest(dist))
 );
