@@ -25,6 +25,15 @@
                 </div>
                 <span class="topline"></span>
             </div>
+            <div class="text-wrapper">
+                <template is="dom-repeat" items="[[ textContent ]]" as="col">
+                    <div class="text-col">
+                        <template is="dom-repeat" items="[[ col ]]" on-dom-change="doHighlighting">
+                            <p></p>
+                        </template>
+                    </div>
+                </template>
+            </div>
         </div>
     </template>
 </dom-module>
@@ -62,6 +71,10 @@
                 partyMap: {
                     type: Object,
                     value: () => partyMap
+                },
+                textContent: {
+                    type: Array,
+                    value: () => []
                 }
             };
         }
@@ -70,6 +83,7 @@
             super.ready();
 
             this.data = [];
+            this.texts = {};
         }
 
         connectedCallback() {
@@ -85,6 +99,12 @@
 
                     this.cloud = BubbleCloud(partyMap)(elem, this.prepareData(bubbles));
                 });
+
+            Promise.all(this.parties.map(party => fetch('output/'+party+'.txt')))
+                .then(results => Promise.all(results.map(resp => resp.text())))
+                .then(results => results.forEach((item, key) => {
+                    this.texts[this.parties[key]] = item.split('\n');
+                }));
         }
 
         prepareData(data) {
@@ -109,15 +129,55 @@
                         id: key+1,
                         word: word.word,
                         count: (id in word.segments) ? word.segments[id].count : 0,
-                        share: (id in word.segments) ? word.segments[id].share : 0
+                        share: (id in word.segments) ? word.segments[id].share : 0,
+                        occurence: (id in word.segments) ? word.segments[id].occurence : []
                     };
                 }).sort((a,b) => b.count-a.count);
 
             this.cloud.updateData(this.prepareData(data.slice(0,30)));
+
+            const numCols = Math.min(Math.floor(window.innerWidth / 320), 3);
+
+            const wordCount = 20;
+            this.textContent = (id === 'all') ?
+                [] :
+                _.chunk(data.slice(0,wordCount).map(word => {
+                    const index = Math.floor(Math.random() * word.occurence.length);
+                    const pos = word.occurence[index].position;
+                    return this.limitText(this.texts[id][word.occurence[index].paragraph_index], pos);
+                }), Math.floor(wordCount / numCols)).slice(0, numCols);
+        }
+
+        limitText(text, pos) {
+            let start = text.lastIndexOf(". ", pos);
+            start = start === -1 ? 0 : start+2;
+            let end = text.indexOf(". ", pos);
+            end = end === -1 ? text.length : end+1;
+            let wordEnd = text.indexOf(' ', pos);
+            wordEnd = (wordEnd === -1 ? text.length : wordEnd) - pos;
+            return {
+                text: text.substring(start, end),
+                pos: pos-start,
+                wordlen: wordEnd
+            };
         }
 
         getPartyName(slug) {
             return partyMap[slug];
+        }
+
+        doHighlighting(ev) {
+            const col = ev.target.parentElement;
+            col.querySelectorAll('p').forEach(elem => {
+                const item = ev.target.modelForElement(elem).item;
+                elem.textContent = "";
+                elem.appendChild(document.createTextNode(item.text.substr(0, item.pos)));
+                const highlight = document.createElement('span');
+                highlight.textContent = item.text.substr(item.pos, item.wordlen);
+                highlight.className = 'highlight';
+                elem.appendChild(highlight);
+                elem.appendChild(document.createTextNode(item.text.substr(item.pos + item.wordlen)));
+            });
         }
     }
 

@@ -2,17 +2,19 @@
   box-sizing: border-box
 
 @import "../bower_components/normalize-css/normalize.css"
+@import "../bower_components/neat/core/neat"
 @import "fonts.css"
 @import "variables"
 @import "globals"
 
 @import "vis"
 
-$content-margin: 20px
+$content-margin: 40px
 
 .content-wrapper
   .tab-wrapper
     overflow: hidden
+    margin-bottom: 10px
 
     .tab-bar
       background-color: $grey
@@ -81,3 +83,36 @@ $content-margin: 20px
     display: block
 
   @include partyColors('&.party-', 'background-color', ' .topline')
+
+  .text-wrapper
+    padding: 0 ($content-margin - 20px)
+    @include grid-container
+
+    .text-col
+      @include grid-column(4)
+      @media (max-width: 960px)
+        @include grid-column(6)
+
+      @media (max-width: 640px)
+        @include grid-column(12)
+
+      p
+        position: relative
+        margin: 0 0 30px 0
+
+        &:after
+          position: absolute
+          content: " "
+          height: 1px
+          width: 30px
+          background: #000
+          left: 0
+          bottom: -15px
+
+        &:last-of-type:after
+          height: 0
+
+        .highlight
+          font-weight: bold
+
+  @include partyColors('&.party-', 'color', ' .text-wrapper .highlight')
