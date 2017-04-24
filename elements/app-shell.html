@@ -52,7 +52,8 @@
                     value: () => ['cdu', 'spd', 'linke', 'gruene', 'fdp', 'piraten', 'afd']
                 },
                 activeParty: {
-                    type: String
+                    type: String,
+                    observer: 'selectParty'
                 },
                 activeWord: {
                     type: String,
@@ -65,6 +66,12 @@
             };
         }
 
+        ready() {
+            super.ready();
+
+            this.data = [];
+        }
+
         connectedCallback() {
             super.connectedCallback();
 
@@ -73,16 +80,40 @@
             fetch('output/all.json')
                 .then(res => res.json())
                 .then(json => {
-                    const bubbles = json.data.slice(0, 30);
+                    this.data = json.data;
+                    const bubbles = this.data.slice(0, 30);
 
-                    BubbleCloud(partyMap)(elem, bubbles.map((item, key) => { return {
-                        id: key,
-                        word: item.word,
-                        count: item.count,
-                        share: item.share,
-                        party_counts: _.mapValues(item.segments, d => d.share)
-                    }; }));
+                    this.cloud = BubbleCloud(partyMap)(elem, this.prepareData(bubbles));
                 });
+        }
+
+        prepareData(data) {
+            return data.map((item, key) => { return {
+                id: item.id || key+1,
+                word: item.word,
+                count: item.count,
+                share: item.share,
+                party_counts: _.mapValues(item.segments || {}, d => d.share)
+            }; });
+        }
+
+        selectParty(id) {
+            if(!id || !this.cloud) {
+                return;
+            }
+
+            const data = (id === 'all') ?
+                this.data :
+                this.data.map((word, key) => {
+                    return {
+                        id: key+1,
+                        word: word.word,
+                        count: (id in word.segments) ? word.segments[id].count : 0,
+                        share: (id in word.segments) ? word.segments[id].share : 0
+                    };
+                }).sort((a,b) => b.count-a.count);
+
+            this.cloud.updateData(this.prepareData(data.slice(0,30)));
         }
 
         getPartyName(slug) {
