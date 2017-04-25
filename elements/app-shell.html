@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="../styles/app.css">
         <!-- endbuild -->
 
-        <div class="bubble_cloud" id="bubble_cloud1"></div>
+        <div class="bubble_cloud" id="bubble_cloud1" on-word-click="selectedWord"></div>
 
         <div class$="content-wrapper party-[[ activeParty ]]">
             <div class="tab-wrapper">
@@ -61,12 +61,11 @@
                     value: () => ['cdu', 'spd', 'linke', 'gruene', 'fdp', 'piraten', 'afd']
                 },
                 activeParty: {
-                    type: String,
-                    observer: 'selectParty'
+                    type: String
                 },
                 activeWord: {
                     type: String,
-                    value: () => ""
+                    value: () => null
                 },
                 partyMap: {
                     type: Object,
@@ -79,11 +78,20 @@
             };
         }
 
+        static get observers() {
+            return [
+                'filterData(activeParty, activeWord)'
+            ]
+        }
+
+
         ready() {
             super.ready();
 
             this.data = [];
             this.texts = {};
+            this._filteredParty = 'all';
+            this._filteredWord = null;
         }
 
         connectedCallback() {
@@ -117,35 +125,49 @@
             }; });
         }
 
-        selectParty(id) {
-            if(!id || !this.cloud) {
+        filterData(party, word) {
+            if(!party || !this.cloud) {
                 return;
             }
 
-            const data = (id === 'all') ?
-                this.data :
-                this.data.map((word, key) => {
-                    return {
-                        id: key+1,
-                        word: word.word,
-                        count: (id in word.segments) ? word.segments[id].count : 0,
-                        share: (id in word.segments) ? word.segments[id].share : 0,
-                        occurence: (id in word.segments) ? word.segments[id].occurence : []
-                    };
-                }).sort((a,b) => b.count-a.count);
-
-            this.cloud.updateData(this.prepareData(data.slice(0,30)));
-
-            const numCols = Math.min(Math.floor(window.innerWidth / 320), 3);
+            if(party !== this._filteredParty) {
+                this._bubbleData = (party === 'all') ?
+                    this.data :
+                    this.data.map((word, key) => {
+                        return {
+                            id: key+1,
+                            word: word.word,
+                            count: (party in word.segments) ? word.segments[party].count : 0,
+                            share: (party in word.segments) ? word.segments[party].share : 0,
+                            occurence: (party in word.segments) ? word.segments[party].occurence : []
+                        };
+                    }).sort((a,b) => b.count-a.count);
+                this.cloud.updateData(this.prepareData(this._bubbleData.slice(0,30)));
+                this._filteredParty = party;
+            }
 
             const wordCount = 20;
-            this.textContent = (id === 'all') ?
-                [] :
-                _.chunk(data.slice(0,wordCount).map(word => {
-                    const index = Math.floor(Math.random() * word.occurence.length);
-                    const pos = word.occurence[index].position;
-                    return this.limitText(this.texts[id][word.occurence[index].paragraph_index], pos);
+
+            const baseData = (!word) ?
+                ((party === 'all') ?
+                    [] :
+                    this._bubbleData.slice(0,wordCount).map(
+                        word => word.occurence[Math.floor(Math.random() * word.occurence.length)]
+                    )
+                ) :
+                ((party === 'all') ?
+                    [] :
+                    this.data[word.id].segments[party].occurence.slice(0, wordCount)
+                );
+
+            const numCols = Math.min(Math.floor(window.innerWidth / 320), 3);
+            this.textContent = _.chunk(baseData.map(word => {
+                    const pos = word.position;
+                    const textParty = (party === 'all') ? word.party : party;
+                    return this.limitText(this.texts[textParty][word.paragraph_index], pos);
                 }), Math.floor(wordCount / numCols)).slice(0, numCols);
+
+            this._filteredWord = word;
         }
 
         limitText(text, pos) {
@@ -178,6 +200,14 @@
                 elem.appendChild(highlight);
                 elem.appendChild(document.createTextNode(item.text.substr(item.pos + item.wordlen)));
             });
+        }
+
+        selectedWord(ev) {
+            this.activeWord = {
+                name: ev.detail.name,
+                id: ev.detail.id-1
+            };
+            this.cloud.selectNode(ev.detail);
         }
     }
 
