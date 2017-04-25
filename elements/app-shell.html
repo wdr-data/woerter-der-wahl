@@ -10,7 +10,8 @@
 
         <div class="bubble_cloud" id="bubble_cloud1"
              on-word-click="selectedWord"
-             on-party-click="selectedParty"></div>
+             on-party-click="selectedParty"
+             on-back-click="goBack"></div>
 
         <div class$="content-wrapper party-[[ activeParty ]]">
             <div class="tab-wrapper">
@@ -214,6 +215,11 @@
 
         selectedParty(ev) {
             this.activeParty = ev.detail.id;
+        }
+
+        goBack() {
+            this.activeWord = null;
+            this.cloud.selectNode(null);
         }
     }
 
