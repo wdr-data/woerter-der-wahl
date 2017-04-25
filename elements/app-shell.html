@@ -8,7 +8,9 @@
         <link rel="stylesheet" href="../styles/app.css">
         <!-- endbuild -->
 
-        <div class="bubble_cloud" id="bubble_cloud1" on-word-click="selectedWord"></div>
+        <div class="bubble_cloud" id="bubble_cloud1"
+             on-word-click="selectedWord"
+             on-party-click="selectedParty"></div>
 
         <div class$="content-wrapper party-[[ activeParty ]]">
             <div class="tab-wrapper">
@@ -208,6 +210,10 @@
                 id: ev.detail.id-1
             };
             this.cloud.selectNode(ev.detail);
+        }
+
+        selectedParty(ev) {
+            this.activeParty = ev.detail.id;
         }
     }
 
