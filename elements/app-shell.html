@@ -119,13 +119,30 @@
         }
 
         prepareData(data) {
-            return data.map((item, key) => { return {
+            const add = (this.activeWord !== null && !_.find(data, (d, key) => (d.id-1 || key) === this.activeWord.id)) ?
+                [Object.assign((this.activeParty === 'all') ?
+                    this.data[this.activeWord.id] :
+                    this.transformForParty(this.activeParty)(this.data[this.activeWord.id]),
+                { id: this.activeWord.id+1 })] : [];
+            return data.concat(add).map((item, key) => { return {
                 id: item.id || key+1,
                 word: item.word,
                 count: item.count,
                 share: item.share,
                 party_counts: _.mapValues(item.segments || {}, d => d.share)
             }; });
+        }
+
+        transformForParty(party) {
+            return (word, key) => {
+                return {
+                    id: key+1,
+                    word: word.word,
+                    count: (party in word.segments) ? word.segments[party].count : 0,
+                    share: (party in word.segments) ? word.segments[party].share : 0,
+                    occurence: (party in word.segments) ? word.segments[party].occurence : []
+                };
+            };
         }
 
         filterData(party, word) {
@@ -136,15 +153,7 @@
             if(party !== this._filteredParty) {
                 this._bubbleData = (party === 'all') ?
                     this.data :
-                    this.data.map((word, key) => {
-                        return {
-                            id: key+1,
-                            word: word.word,
-                            count: (party in word.segments) ? word.segments[party].count : 0,
-                            share: (party in word.segments) ? word.segments[party].share : 0,
-                            occurence: (party in word.segments) ? word.segments[party].occurence : []
-                        };
-                    }).sort((a,b) => b.count-a.count);
+                    this.data.map(this.transformForParty(party)).sort((a,b) => b.count-a.count);
                 this.cloud.updateData(this.prepareData(this._bubbleData.slice(0,30)));
                 this._filteredParty = party;
             }
