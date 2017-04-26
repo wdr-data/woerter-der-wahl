@@ -11,11 +11,18 @@ $bp-md: $max-width
 $bp-sm: 760px
 
 // parties
-$party-list:   cdu  spd     gruene  fdp     linke   piraten afd
-$party-colors: #000 #e3000f #46962b #ffed00 #ef0082 #ff8800 #009ee0
+$party-list:        all            cdu  spd     gruene  fdp     linke   piraten afd
+$party-colors:      $neutral-color #000 #e3000f #46962b #ffed00 #ef0082 #ff8800 #009ee0
+$party-text-colors: #000           #fff #fff    #fff    #000    #fff    #000    #000
 
 @mixin partyColors($prefix, $prop, $suffix:"")
   @each $party in $party-list
     $i: index($party-list, $party)
     #{$prefix}#{$party}#{$suffix}
       #{$prop}: nth($party-colors, $i)
+
+@mixin partyTextColors($prefix, $prop, $suffix:"")
+  @each $party in $party-list
+    $i: index($party-list, $party)
+    #{$prefix}#{$party}#{$suffix}
+      #{$prop}: nth($party-text-colors, $i)
