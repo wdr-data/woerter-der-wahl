@@ -119,7 +119,7 @@
         }
 
         prepareData(data) {
-            const add = (this.activeWord !== null && !_.find(data, (d, key) => (d.id-1 || key) === this.activeWord.id)) ?
+            const add = (this.activeWord !== null && !_.find(data, (d, key) => (d.id ? d.id-1 : key) === this.activeWord.id)) ?
                 [Object.assign((this.activeParty === 'all') ?
                     this.data[this.activeWord.id] :
                     this.transformForParty(this.activeParty)(this.data[this.activeWord.id]),
@@ -156,6 +156,14 @@
                     this.data.map(this.transformForParty(party)).sort((a,b) => b.count-a.count);
                 this.cloud.updateData(this.prepareData(this._bubbleData.slice(0,30)));
                 this._filteredParty = party;
+            }
+
+            if(word !== null) {
+                if(party === 'all') {
+                    this.cloud.createPartyBubbles(this.prepareData([])[0]); // will return only the selected word
+                } else {
+                    this.cloud.destroyPartyBubbles();
+                }
             }
 
             const wordCount = 20;
@@ -229,6 +237,7 @@
         goBack() {
             this.activeWord = null;
             this.cloud.selectNode(null);
+            this.cloud.destroyPartyBubbles();
         }
     }
 
