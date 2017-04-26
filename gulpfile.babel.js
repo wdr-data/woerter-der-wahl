@@ -9,6 +9,7 @@ import PythonShell from 'python-shell';
 import gulpPlugins from 'gulp-load-plugins';
 import dlFonts from './scripts/fonts';
 import imageminJpegoptim from 'imagemin-jpegoptim';
+import merge from 'merge-stream';
 const $ = gulpPlugins();
 
 import webpackConfigDev from './webpack.config.dev';
@@ -18,7 +19,7 @@ const webpackBundler = webpack(webpackConfigDev);
 
 const dist = 'build';
 
-gulp.task('styles', () => gulp.src('styles/main.sass')
+gulp.task('styles', () => gulp.src('styles/{main,app}.sass')
     .pipe($.sass())
     .pipe(gulp.dest(path.join('.tmp', 'styles')))
 );
@@ -52,7 +53,7 @@ gulp.task('html', ['styles', 'templates'], () => gulp.src(path.join('.tmp', 'ind
 gulp.task('fonts', () => dlFonts(path.join(dist, 'fonts')));
 gulp.task('fonts:develop', () => dlFonts('fonts'));
 
-gulp.task('scripts', () => gulp.src('app.js')
+gulp.task('scripts', () => gulp.src('lib/index.js')
     .pipe(webpackStream(webpackConfig, webpack))
     .pipe(gulp.dest(dist))
 );
@@ -70,16 +71,14 @@ gulp.task('serve', ['styles', 'templates', 'fonts:develop'], () => {
 
                     // pretty colored output
                     stats: { colors: true }
-                }),
-
-                webpackHotMiddleware(webpackBundler)
+                })
             ]
         }
     });
 
     gulp.watch('index.html', ['templates', browserSync.reload]);
     gulp.watch('styles/**', ['styles', browserSync.reload]);
-    gulp.watch(['*.js', 'lib/**/*.js'], browserSync.reload)
+    gulp.watch(['*.js', 'lib/**/*.js', 'elements/**/*'], browserSync.reload)
 });
 
 gulp.task('images', function() {
@@ -94,8 +93,20 @@ gulp.task('images', function() {
         .pipe(gulp.dest(path.join(dist, 'images')));
 });
 
+gulp.task('elements', ['styles'], () => gulp.src('elements/**/*')
+    .pipe($.usemin({
+        path: './',
+        css: [
+            $.cssimport({ includePaths: ['styles'] }),
+            $.cleanCss(),
+            $.rev()
+        ]
+    }))
+    .pipe(gulp.dest(path.join(dist, 'elements')))
+);
+
 gulp.task('copy:dist', () => gulp.src([
-        'bower_components/jquery/dist/jquery.min.js',
+        'bower_components/**/*.{js,html}'
     ], { base: './' })
         .pipe(gulp.dest(dist))
 );
@@ -114,6 +125,6 @@ gulp.task('data-vis', ['data'], () => gulp.src('data.html')
         .pipe(gulp.dest(dist))
 );
 
-gulp.task('build', ['data:prod', 'copy:dist', 'scripts', 'html', 'fonts', 'images']);
+gulp.task('build', ['data:prod', 'copy:dist', 'scripts', 'html', 'fonts', 'images', 'elements']);
 
 gulp.task('default', ['build']);

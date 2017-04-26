@@ -4,12 +4,6 @@
   bottom: 0
   right: 0
 
-@mixin partyColors($prefix, $prop)
-  @each $party in $party-list
-    $i: index($party-list, $party)
-    #{$prefix}#{$party}
-      #{$prop}: nth($party-colors, $i)
-
 .bubble_cloud
   position: relative
   height: 500px
@@ -50,6 +44,32 @@
   .partyBubble
     fill: none
     @include partyColors('&.party-', 'fill')
+    cursor: pointer
+
+  .back-button
+    display: none
+    position: absolute
+    top: 90px
+    right: 200px
+    background: #004e86
+    color: white
+    padding: 0 15px 0 10px
+    text-transform: uppercase
+    text-decoration: none
+    font-size: 16px
+    line-height: 32px
+    cursor: pointer
+
+    &.shown
+      display: block
+
+    &:before
+      content: "\d7"
+      margin-right: 13px
+      font-size: 38px
+      color: #909090
+      line-height: 20px
+      vertical-align: -6px
 
   // selected state
   &.selection-active

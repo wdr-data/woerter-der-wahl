@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
 
+    <link rel="import" href="elements/app-shell.html">
+
 </head>
 <body>
 
@@ -25,13 +27,11 @@
 </div>
 
 <article id="content" class="container">
-    <div class="bubble_cloud" id="bubble_cloud1"></div>
+    <app-shell></app-shell>
 </article>
 
 {% include "partials/breadcrumb.html" %}
 {% include "partials/footer.html" %}
-
-<script src="/bundle.js"></script>
 
 {% include "partials/webtrekk.html" %}
 

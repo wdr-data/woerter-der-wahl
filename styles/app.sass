@@ -1,0 +1,118 @@
+*
+  box-sizing: border-box
+
+@import "../bower_components/normalize-css/normalize.css"
+@import "../bower_components/neat/core/neat"
+@import "fonts.css"
+@import "variables"
+@import "globals"
+
+@import "vis"
+
+$content-margin: 40px
+
+.content-wrapper
+  .tab-wrapper
+    overflow: hidden
+    margin-bottom: 10px
+
+    .tab-bar
+      background-color: $grey
+      text-align: center
+      display: inline-block
+      width: 100%
+
+    iron-selector
+      display: inline-block
+
+      &:after
+        display: inline
+
+  .tab
+    display: block
+    float: left
+    margin: 0
+    padding: 10px 20px
+    cursor: pointer
+    text-transform: uppercase
+    color: white
+    width: 100px
+    text-align: center
+    @include partyColors('&.party-', 'background-color')
+
+    &.party-all
+      background-color: $grey
+
+    &.party-all, &.party-fdp, &.party-piraten, &.party-afd
+      color: black
+
+    &.iron-selected
+      position: relative
+      font-weight: bold
+
+      &:after, &:before
+        top: 100%
+        left: 50%
+        border: solid transparent
+        content: " "
+        height: 0
+        width: 0
+        position: absolute
+        pointer-events: none
+
+      &:after
+        border-color: rgba(136, 183, 213, 0)
+        border-top-color: #88b7d5
+        border-width: 35px 50px
+        margin-left: -50px
+
+      @include partyColors('&.party-', 'border-top-color', ':after')
+      &.party-all:after
+        border-top-color: $grey
+
+      &:before
+        border-color: rgba(255, 255, 255, 0)
+        border-top-color: #ffffff
+        border-width: 45px 60px
+        margin-left: -60px
+
+  .topline
+    height: 5px
+    background-color: $grey
+    margin: 15px $content-margin 20px $content-margin
+    display: block
+
+  @include partyColors('&.party-', 'background-color', ' .topline')
+
+  .text-wrapper
+    padding: 0 ($content-margin - 20px)
+    @include grid-container
+
+    .text-col
+      @include grid-column(4)
+      @media (max-width: 960px)
+        @include grid-column(6)
+
+      @media (max-width: 640px)
+        @include grid-column(12)
+
+      p
+        position: relative
+        margin: 0 0 30px 0
+
+        &:after
+          position: absolute
+          content: " "
+          height: 1px
+          width: 30px
+          background: #000
+          left: 0
+          bottom: -15px
+
+        &:last-of-type:after
+          height: 0
+
+        .highlight
+          font-weight: bold
+
+  @include partyColors('&.party-', 'color', ' .text-wrapper .highlight')

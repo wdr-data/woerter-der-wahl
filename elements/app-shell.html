@@ -1,0 +1,227 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="_lib.html">
+
+<dom-module id="app-shell">
+    <template>
+        <!-- build:css(.tmp/elements) ../styles/app.css -->
+        <link rel="stylesheet" href="../styles/app.css">
+        <!-- endbuild -->
+
+        <div class="bubble_cloud" id="bubble_cloud1"
+             on-word-click="selectedWord"
+             on-party-click="selectedParty"
+             on-back-click="goBack"></div>
+
+        <div class$="content-wrapper party-[[ activeParty ]]">
+            <div class="tab-wrapper">
+                <div class="tab-bar">
+                    <iron-selector attr-for-selected="data-select"
+                                   selected="{{ activeParty }}"
+                                   fallback-selection="all"
+                                   class="clearfix">
+                        <div class="tab party-all" data-select="all">Alle</div>
+                        <template is="dom-repeat" items="[[ parties ]]">
+                            <div class$="tab party-[[ item ]]" data-select="[[ item ]]">[[ getPartyName(item) ]]</div>
+                        </template>
+                    </iron-selector>
+                </div>
+                <span class="topline"></span>
+            </div>
+            <div class="text-wrapper">
+                <template is="dom-repeat" items="[[ textContent ]]" as="col">
+                    <div class="text-col">
+                        <template is="dom-repeat" items="[[ col ]]" on-dom-change="doHighlighting">
+                            <p></p>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </template>
+</dom-module>
+
+<script>
+    const partyMap = {
+        cdu: "CDU",
+        spd: "SPD",
+        gruene: "Grüne",
+        fdp: "FDP",
+        linke: "Linke",
+        piraten: "Piraten",
+        afd: "AFD"
+    };
+
+    class AppShell extends Polymer.Element {
+        static get is() {
+            return 'app-shell';
+        }
+
+        static get properties() {
+            return {
+                parties: {
+                    type: Array,
+                    value: () => ['cdu', 'spd', 'linke', 'gruene', 'fdp', 'piraten', 'afd']
+                },
+                activeParty: {
+                    type: String
+                },
+                activeWord: {
+                    type: String,
+                    value: () => null
+                },
+                partyMap: {
+                    type: Object,
+                    value: () => partyMap
+                },
+                textContent: {
+                    type: Array,
+                    value: () => []
+                }
+            };
+        }
+
+        static get observers() {
+            return [
+                'filterData(activeParty, activeWord)'
+            ]
+        }
+
+
+        ready() {
+            super.ready();
+
+            this.data = [];
+            this.texts = {};
+            this._filteredParty = 'all';
+            this._filteredWord = null;
+        }
+
+        connectedCallback() {
+            super.connectedCallback();
+
+            const elem = this.shadowRoot.querySelector('#bubble_cloud1');
+
+            fetch('output/all.json')
+                .then(res => res.json())
+                .then(json => {
+                    this.data = json.data;
+                    const bubbles = this.data.slice(0, 30);
+
+                    this.cloud = BubbleCloud(partyMap)(elem, this.prepareData(bubbles));
+                });
+
+            Promise.all(this.parties.map(party => fetch('output/'+party+'.txt')))
+                .then(results => Promise.all(results.map(resp => resp.text())))
+                .then(results => results.forEach((item, key) => {
+                    this.texts[this.parties[key]] = item.split('\n');
+                }));
+        }
+
+        prepareData(data) {
+            return data.map((item, key) => { return {
+                id: item.id || key+1,
+                word: item.word,
+                count: item.count,
+                share: item.share,
+                party_counts: _.mapValues(item.segments || {}, d => d.share)
+            }; });
+        }
+
+        filterData(party, word) {
+            if(!party || !this.cloud) {
+                return;
+            }
+
+            if(party !== this._filteredParty) {
+                this._bubbleData = (party === 'all') ?
+                    this.data :
+                    this.data.map((word, key) => {
+                        return {
+                            id: key+1,
+                            word: word.word,
+                            count: (party in word.segments) ? word.segments[party].count : 0,
+                            share: (party in word.segments) ? word.segments[party].share : 0,
+                            occurence: (party in word.segments) ? word.segments[party].occurence : []
+                        };
+                    }).sort((a,b) => b.count-a.count);
+                this.cloud.updateData(this.prepareData(this._bubbleData.slice(0,30)));
+                this._filteredParty = party;
+            }
+
+            const wordCount = 20;
+
+            const baseData = (!word) ?
+                ((party === 'all') ?
+                    [] :
+                    this._bubbleData.slice(0,wordCount).map(
+                        word => word.occurence[Math.floor(Math.random() * word.occurence.length)]
+                    )
+                ) :
+                ((party === 'all') ?
+                    [] :
+                    this.data[word.id].segments[party].occurence.slice(0, wordCount)
+                );
+
+            const numCols = Math.min(Math.floor(window.innerWidth / 320), 3);
+            this.textContent = _.chunk(baseData.map(word => {
+                    const pos = word.position;
+                    const textParty = (party === 'all') ? word.party : party;
+                    return this.limitText(this.texts[textParty][word.paragraph_index], pos);
+                }), Math.floor(wordCount / numCols)).slice(0, numCols);
+
+            this._filteredWord = word;
+        }
+
+        limitText(text, pos) {
+            let start = text.lastIndexOf(". ", pos);
+            start = start === -1 ? 0 : start+2;
+            let end = text.indexOf(". ", pos);
+            end = end === -1 ? text.length : end+1;
+            let wordEnd = text.indexOf(' ', pos);
+            wordEnd = (wordEnd === -1 ? text.length : wordEnd) - pos;
+            return {
+                text: text.substring(start, end),
+                pos: pos-start,
+                wordlen: wordEnd
+            };
+        }
+
+        getPartyName(slug) {
+            return partyMap[slug];
+        }
+
+        doHighlighting(ev) {
+            const col = ev.target.parentElement;
+            col.querySelectorAll('p').forEach(elem => {
+                const item = ev.target.modelForElement(elem).item;
+                elem.textContent = "";
+                elem.appendChild(document.createTextNode(item.text.substr(0, item.pos)));
+                const highlight = document.createElement('span');
+                highlight.textContent = item.text.substr(item.pos, item.wordlen);
+                highlight.className = 'highlight';
+                elem.appendChild(highlight);
+                elem.appendChild(document.createTextNode(item.text.substr(item.pos + item.wordlen)));
+            });
+        }
+
+        selectedWord(ev) {
+            this.activeWord = {
+                name: ev.detail.name,
+                id: ev.detail.id-1
+            };
+            this.cloud.selectNode(ev.detail);
+        }
+
+        selectedParty(ev) {
+            this.activeParty = ev.detail.id;
+        }
+
+        goBack() {
+            this.activeWord = null;
+            this.cloud.selectNode(null);
+        }
+    }
+
+    customElements.define(AppShell.is, AppShell);
+</script>

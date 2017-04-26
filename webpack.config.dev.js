@@ -7,12 +7,6 @@ module.exports = Object.assign({}, prod, {
     module: {},
 
     entry: [
-        'webpack/hot/dev-server',
-        'webpack-hot-middleware/client',
-        './app'
-    ],
-
-    plugins: [
-        new webpack.HotModuleReplacementPlugin()
+        './lib'
     ]
 });
