@@ -177,7 +177,8 @@
                 ) :
                 ((party === 'all') ?
                     [] :
-                    this.data[word.id].segments[party].occurence.slice(0, wordCount)
+                    (party in this.data[word.id].segments) ?
+                        this.data[word.id].segments[party].occurence.slice(0, wordCount) : []
                 );
 
             const numCols = Math.min(Math.floor(window.innerWidth / 320), 3);
