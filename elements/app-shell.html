@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="../styles/app.css">
         <!-- endbuild -->
 
-        <div class="bubble_cloud" id="bubble_cloud1"
+        <div class$="bubble_cloud party-[[ activeParty ]] [[ _visClass ]]" id="bubble_cloud1"
              on-word-click="selectedWord"
              on-party-click="selectedParty"
              on-back-click="goBack"></div>
@@ -77,6 +77,10 @@
                 textContent: {
                     type: Array,
                     value: () => []
+                },
+                _visClass: {
+                    type: String,
+                    computed: 'getVisClass(activeWord)'
                 }
             };
         }
@@ -239,6 +243,10 @@
             this.activeWord = null;
             this.cloud.selectNode(null);
             this.cloud.destroyPartyBubbles();
+        }
+
+        getVisClass(word) {
+            return word !== null ? 'selection-active' : '';
         }
     }
 

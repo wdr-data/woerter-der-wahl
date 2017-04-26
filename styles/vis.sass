@@ -16,7 +16,9 @@
     &:hover
       fill: darken($neutral-color, 20%)
       stroke: #444444
-      stroke-width: 1px
+      stroke-width: 2px
+
+  @include partyColors('&.party-', 'fill', ' .bubble')
 
   .text-container
     overflow: hidden
@@ -36,6 +38,8 @@
       .value
         margin-top: 0.2em
         font-size: 50%
+
+  @include partyTextColors('&.party-', 'color', ' .text-container .word')
 
   .center-border
     fill: none
@@ -83,7 +87,6 @@
         cursor: auto
 
         &:hover
-          fill: $neutral-color
           stroke: none
 
     .word
@@ -92,7 +95,8 @@
 
       &.selected
         opacity: 1
-        color: inherit
+
+    @include partyTextColors('&.party-', 'color', ' .word.selected')
 
     .center-border
       stroke: $neutral-color
