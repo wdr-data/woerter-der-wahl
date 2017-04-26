@@ -187,9 +187,8 @@
 
             const numCols = Math.min(Math.floor(window.innerWidth / 320), 3);
             this.textContent = _.chunk(baseData.map(word => {
-                    const pos = word.position;
                     const textParty = (party === 'all') ? word.party : party;
-                    return this.limitText(this.texts[textParty][word.paragraph_index], pos);
+                    return this.limitText(this.texts[textParty][word.paragraph_index], word.position);
                 }), Math.floor(wordCount / numCols)).slice(0, numCols);
 
             this._filteredWord = word;
