@@ -1,18 +1,19 @@
 import BubbleCloud from './lib/bubble_cloud';
 import _ from 'lodash';
+import qs from 'qs';
+import * as helpers from './lib/data_helpers';
 
 (function() {
+    const params = qs.parse(window.location.search.substr(1));
+    console.log(params);
+
     fetch('output/all.json')
         .then(res => res.json())
         .then(json => {
-            const bubbles = json.data.slice(0, 30);
-
-            BubbleCloud()("#bubbleCloudVis", bubbles.map((item, key) => { return {
-                id: key,
-                word: item.word,
-                count: item.count,
-                share: item.share,
-                party_counts: _.mapValues(item.segments, d => d.share)
-            }; }));
+            const bubbles = json.data;
+            const data = helpers.bubbleData(bubbles, params.party || 'all').map(helpers.prepareData).slice(0, 30);
+            const elem = document.getElementById('bubbleCloudVis');
+            elem.classList.add('party-'+(params.party || 'all'));
+            BubbleCloud()(elem, data);
         });
 })();
