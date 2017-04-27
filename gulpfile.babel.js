@@ -9,6 +9,7 @@ import PythonShell from 'python-shell';
 import gulpPlugins from 'gulp-load-plugins';
 import dlFonts from './scripts/fonts';
 import imageminJpegoptim from 'imagemin-jpegoptim';
+import ftp from 'vinyl-ftp';
 import merge from 'merge-stream';
 const $ = gulpPlugins();
 
@@ -16,6 +17,8 @@ import webpackConfigDev from './webpack.config.dev';
 import webpackConfig from './webpack.config'
 
 const webpackBundler = webpack(webpackConfigDev);
+
+require('dotenv').config({silent: true});
 
 const dist = 'build';
 
@@ -126,5 +129,17 @@ gulp.task('data-vis', ['data'], () => gulp.src('data.html')
 );
 
 gulp.task('build', ['data:prod', 'copy:dist', 'scripts', 'html', 'fonts', 'images', 'elements']);
+
+gulp.task('upload', ['build'], () => {
+    const conn = ftp.create({
+        host: process.env.FTP_HOST,
+        user: process.env.FTP_USER,
+        pass: process.env.FTP_PASS,
+        log: $.util.log
+    });
+
+    return gulp.src([path.join(dist, '**')]/*, { buffer: false }*/)
+        .pipe(conn.dest('/'));
+});
 
 gulp.task('default', ['build']);

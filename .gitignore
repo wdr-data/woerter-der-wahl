@@ -8,3 +8,5 @@ fonts/
 
 *.odt
 *.docx
+
+.env
