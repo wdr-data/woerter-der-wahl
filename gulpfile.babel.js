@@ -19,7 +19,7 @@ const webpackBundler = webpack(webpackConfigDev);
 
 const dist = 'build';
 
-gulp.task('styles', () => gulp.src('styles/{main,app}.sass')
+gulp.task('styles', () => gulp.src('styles/{main,app,embed}.sass')
     .pipe($.sass())
     .pipe(gulp.dest(path.join('.tmp', 'styles')))
 );
@@ -31,13 +31,13 @@ gulp.task('templates', () => gulp.src('index.html')
     .pipe(gulp.dest('.tmp'))
 );
 
-gulp.task('html', ['styles', 'templates'], () => gulp.src(path.join('.tmp', 'index.html'))
+gulp.task('html', ['styles', 'templates'], () => gulp.src([path.join('.tmp', 'index.html'), 'embed.html'])
     .pipe($.usemin({
         path: './',
         css: [
-            $.cssimport({ includePaths: ['styles'] }),
-            $.cleanCss(),
-            $.rev()
+            () => $.cssimport({ includePaths: ['styles'] }),
+            () => $.cleanCss(),
+            () => $.rev()
         ]
     }))
     .pipe($.if('*.html', $.htmlmin({
@@ -53,7 +53,7 @@ gulp.task('html', ['styles', 'templates'], () => gulp.src(path.join('.tmp', 'ind
 gulp.task('fonts', () => dlFonts(path.join(dist, 'fonts')));
 gulp.task('fonts:develop', () => dlFonts('fonts'));
 
-gulp.task('scripts', () => gulp.src('lib/index.js')
+gulp.task('scripts', () => gulp.src(['lib/index.js', 'embed.js'])
     .pipe(webpackStream(webpackConfig, webpack))
     .pipe(gulp.dest(dist))
 );

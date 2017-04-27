@@ -2,6 +2,10 @@ const webpack = require('webpack');
 
 module.exports = {
     context: __dirname,
+    entry: {
+        'lib':   './lib',
+        'embed': './embed.js'
+    },
     module: {
         rules: [
             {
@@ -17,6 +21,6 @@ module.exports = {
     output: {
         path: __dirname,
         publicPath: '/',
-        filename: 'lib.js'
+        filename: '[name].js'
     }
 };

@@ -7,7 +7,7 @@ import _ from 'lodash';
         .then(json => {
             const bubbles = json.data.slice(0, 30);
 
-            BubbleCloud()("#bubble_cloud1", bubbles.map((item, key) => { return {
+            BubbleCloud()("#bubbleCloudVis", bubbles.map((item, key) => { return {
                 id: key,
                 word: item.word,
                 count: item.count,
