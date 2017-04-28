@@ -131,34 +131,40 @@ def get_result_sum():
     # turn results_sum dict into list
     return sorted(results_sum.values(), key=lambda x: x['count'], reverse=True)
 
-if __name__=="__main__":
-    files_from_doc = ['gruene', 'spd', 'fdp', 'piraten', 'linke']
-    files_from_pdf = ['cdu', 'afd']
-
-    for path in files_from_pdf:
-        paragraphs = []
-        print(path)
-        with open('data/'+path+'.txt') as f:
-            container = ''
-            for line in f:
-                line = line.replace('\n', '')
-                if len(line) == 0:
-                    continue
-                if container == '' and len(line) <70:
-                    paragraphs.append(line)
-                    continue
-                if container.endswith('- '):
-                    if re.search(r'^[a-zäüö]', line):
-                        container = container[:-1]
-                    container = container[:-1]
-                container += line + ' '
-                if re.search(r'[\s\.\,\?\!\"\'\“):]$', line):
+def load_and_clean(path, minlen):
+    paragraphs = []
+    print(path)
+    with open('data/'+path+'.txt') as f:
+        container = ''
+        for line in f:
+            line = line.replace('\n', '')
+            if len(line) == 0 and len(container) > 0:
+                if not container.endswith('- '):
                     paragraphs.append(container[:-1])
                     container = ''
-        result = analyze(paragraphs)
-        append_result(result, path)
-        save_json(result,path)
-        save_text(paragraphs,path)
+                continue
+            if container == '' and len(line) < minlen:
+                paragraphs.append(line)
+                continue
+            if container.endswith('- '):
+                if re.search(r'^[a-zäüö]', line):
+                    container = container[:-1]
+                container = container[:-1]
+            container += line + ' '
+            if re.search(r'[\.\?\!\"\'\“):]$', line):
+                paragraphs.append(container[:-1])
+                container = ''
+    result = analyze(paragraphs)
+    append_result(result, path)
+    save_json(result,path)
+    save_text(paragraphs,path)
+
+
+if __name__=="__main__":
+    files_from_doc = ['gruene', 'spd', 'fdp', 'piraten', 'linke']
+
+    load_and_clean('cdu', 70)
+    load_and_clean('afd', 20)
 
     for path in files_from_doc:
         paragraphs = []
