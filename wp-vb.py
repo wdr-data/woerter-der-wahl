@@ -131,29 +131,27 @@ def get_result_sum():
     # turn results_sum dict into list
     return sorted(results_sum.values(), key=lambda x: x['count'], reverse=True)
 
-def load_and_clean(path, minlen):
+def load_and_clean(file, path, minlen):
     paragraphs = []
-    print(path)
-    with open('data/'+path+'.txt') as f:
-        container = ''
-        for line in f:
-            line = line.replace('\n', '')
-            if len(line) == 0 and len(container) > 0:
-                if not container.endswith('- '):
-                    paragraphs.append(container[:-1])
-                    container = ''
-                continue
-            if container == '' and len(line) < minlen:
-                paragraphs.append(line)
-                continue
-            if container.endswith('- '):
-                if re.search(r'^[a-zäüö]', line):
-                    container = container[:-1]
-                container = container[:-1]
-            container += line + ' '
-            if re.search(r'[\.\?\!\"\'\“):]$', line):
+    container = ''
+    for line in file:
+        line = line.replace('\n', '')
+        if len(line) == 0 and len(container) > 0:
+            if not container.endswith('- '):
                 paragraphs.append(container[:-1])
                 container = ''
+            continue
+        if container == '' and len(line) < minlen:
+            paragraphs.append(line)
+            continue
+        if container.endswith('- '):
+            if re.search(r'^[a-zäüö]', line):
+                container = container[:-1]
+            container = container[:-1]
+        container += line + ' '
+        if re.search(r'[\.\?\!\"\'\“):]$', line):
+            paragraphs.append(container[:-1])
+            container = ''
     result = analyze(paragraphs)
     append_result(result, path)
     save_json(result,path)
@@ -163,8 +161,14 @@ def load_and_clean(path, minlen):
 if __name__=="__main__":
     files_from_doc = ['gruene', 'spd', 'fdp', 'piraten', 'linke']
 
-    load_and_clean('cdu', 70)
-    load_and_clean('afd', 20)
+    print('cdu')
+    with open('data/cdu.txt') as f:
+        f = [item.replace('', '').strip() for item in f]
+        load_and_clean(f, 'cdu', 70)
+
+    print('afd')
+    with open('data/cdu.txt') as f:
+        load_and_clean(f, 'afd', 20)
 
     for path in files_from_doc:
         paragraphs = []
