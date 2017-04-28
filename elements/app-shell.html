@@ -297,4 +297,13 @@
     }
 
     customElements.define(AppShell.is, AppShell);
+
+    // more button in teaser
+    (function() {
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('.info-modal-link').addEventListener('click', ev => {
+                document.querySelector('app-shell').openModal(ev);
+            });
+        });
+    })();
 </script>
