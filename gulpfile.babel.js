@@ -124,12 +124,12 @@ gulp.task('data:prod', ['data'], () => gulp.src('output/**/*').pipe(gulp.dest(pa
 
 const parties = ['spd', 'cdu', 'gruene', 'fdp', 'piraten', 'linke', 'afd'];
 gulp.task('data-vis', ['data'], () => gulp.src('data.html')
-    .pipe($.data(() => { return {
-        lists: parties.map(party => { return {
+    .pipe($.data(() => ({
+        lists: parties.map(party => ({
             party: party,
             words: require(`./output/${party}.json`).data.slice(0, 30)
-        }; })
-    }; }))
+        }))
+    })))
     .pipe($.swig())
     .pipe(gulp.dest(dist))
 );
