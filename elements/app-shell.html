@@ -97,7 +97,7 @@
 
             this.data = [];
             this.texts = {};
-            this._filteredParty = 'all';
+            this._filteredParty = '';
             this._filteredWord = null;
         }
 
@@ -110,9 +110,8 @@
                 .then(res => res.json())
                 .then(json => {
                     this.data = json.data;
-                    const bubbles = this.data.slice(0, 30);
-
-                    this.cloud = BubbleCloud(partyMap)(elem, this.prepareData(bubbles));
+                    this.cloud = BubbleCloud(partyMap)(elem, []);
+                    this.filterData(this.activeParty, this.activeWord);
                 });
 
             Promise.all(this.parties.map(party => fetch('output/'+party+'.txt')))
@@ -151,16 +150,29 @@
             }
 
             const wordCount = 20;
+            const wordsForAll = Math.round(wordCount / 2);
+            const wordsPerParty = Math.round(wordCount / 4);
 
             const baseData = (!word) ?
                 ((party === 'all') ?
-                    [] :
+                    this._bubbleData.slice(0, wordsForAll).reduce(
+                        (list, word) => list.concat(_.map(word.segments,
+                            (val, party) => Object.assign(
+                                val.occurence[Math.floor(Math.random() * val.occurence.length)],
+                                { party: party }
+                            )
+                        )),
+                    []) :
                     this._bubbleData.slice(0,wordCount).map(
                         word => word.occurence[Math.floor(Math.random() * word.occurence.length)]
                     )
                 ) :
                 ((party === 'all') ?
-                    [] :
+                    this.parties.reduce((sum, party) => sum.concat(
+                        Array.apply(null, Array(wordsPerParty))
+                            .map(() => Math.round(Math.random() * (this.data[word.id].segments[party].occurence.length-1)))
+                            .map(i => Object.assign(this.data[word.id].segments[party].occurence[i], { party: party }))
+                    ), []) :
                     (party in this.data[word.id].segments) ?
                         this.data[word.id].segments[party].occurence.slice(0, wordCount) : []
                 );
@@ -181,7 +193,7 @@
             this._filteredWord = word;
         }
 
-        limitText(text, pos) {
+        limitText(text, pos, party) {
             let start = text.lastIndexOf(". ", pos);
             start = start === -1 ? 0 : start+2;
             let end = text.indexOf(". ", pos);
@@ -191,7 +203,8 @@
             return {
                 text: text.substring(start, end),
                 pos: pos-start,
-                wordlen: wordEnd
+                wordlen: wordEnd,
+                party: party
             };
         }
 
@@ -210,6 +223,7 @@
                 highlight.className = 'highlight';
                 elem.appendChild(highlight);
                 elem.appendChild(document.createTextNode(item.text.substr(item.pos + item.wordlen)));
+                elem.className = item.party ? 'party-' + item.party : '';
             });
         }
 
