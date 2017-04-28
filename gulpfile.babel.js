@@ -107,7 +107,9 @@ gulp.task('elements', ['styles'], () => gulp.src('elements/**/*')
             $.rev()
         ]
     }))
-    .pipe($.if('app-shell.html', $.template({ infotext: marked(fs.readFileSync('content/info.md').toString()) })))
+    .pipe($.if('app-shell.html', $.template({
+        infotext: marked(fs.readFileSync('content/info.md').toString(), { breaks: true })
+    })))
     .pipe(gulp.dest(path.join(dist, 'elements')))
 );
 
