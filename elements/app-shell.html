@@ -135,9 +135,11 @@
                 return;
             }
 
+            const wordCountBubbles = 30;
+
             if(party !== this._filteredParty) {
                 this._bubbleData = dataHelpers.bubbleData(this.data, party);
-                this.cloud.updateData(this.prepareData(this._bubbleData.slice(0,30)));
+                this.cloud.updateData(this.prepareData(this._bubbleData.slice(0,wordCountBubbles)));
                 this._filteredParty = party;
             }
 
@@ -155,17 +157,25 @@
 
             const baseData = (!word) ?
                 ((party === 'all') ?
-                    this._bubbleData.slice(0, wordsForAll).reduce(
-                        (list, word) => list.concat(_.map(word.segments,
-                            (val, party) => Object.assign(
-                                val.occurence[Math.floor(Math.random() * val.occurence.length)],
-                                { party: party }
-                            )
-                        )),
-                    []) :
-                    this._bubbleData.slice(0,wordCount).map(
-                        word => word.occurence[Math.floor(Math.random() * word.occurence.length)]
-                    )
+                    this._bubbleData
+                        .slice(0, wordCountBubbles)
+                        .sort(() => Math.random()*2-1)
+                        .slice(0, wordsForAll)
+                        .reduce(
+                            (list, word) => list.concat(_.map(word.segments,
+                                (val, party) => Object.assign(
+                                    val.occurence[Math.floor(Math.random() * val.occurence.length)],
+                                    { party: party }
+                                )
+                            )),
+                        []) :
+                    this._bubbleData
+                        .slice(0, wordCountBubbles)
+                        .sort(() => Math.random()*2-1)
+                        .slice(0,wordCount)
+                        .map(
+                            word => word.occurence[Math.floor(Math.random() * word.occurence.length)]
+                        )
                 ) :
                 ((party === 'all') ?
                     this.parties.reduce((sum, party) => sum.concat(
@@ -175,7 +185,10 @@
                             .map(i => Object.assign(this.data[word.id].segments[party].occurence[i], { party: party }))
                     ), []) :
                     (party in this.data[word.id].segments) ?
-                        this.data[word.id].segments[party].occurence.slice(0, wordCount) : []
+                        this.data[word.id].segments[party].occurence
+                            .sort(() => Math.random()*2-1)
+                            .slice(0, wordCount) :
+                        []
                 );
 
             const numCols = Math.min(Math.floor(window.innerWidth / 320), 3);
