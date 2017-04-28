@@ -124,7 +124,7 @@ def load_and_clean(file, path, minlen):
     paragraphs = []
     container = ''
     for line in file:
-        line = line.replace('\n', '').replace('', '').strip()
+        line = line.replace('\n', '')
         if len(line) == 0 and len(container) > 0:
             if not container.endswith('- '):
                 paragraphs.append(container[:-1])
@@ -152,10 +152,11 @@ if __name__=="__main__":
 
     print('cdu')
     with open('data/cdu.txt') as f:
+        f = [item.replace('', '').strip() for item in f]
         load_and_clean(f, 'cdu', 70)
 
     print('afd')
-    with open('data/cdu.txt') as f:
+    with open('data/afd.txt') as f:
         load_and_clean(f, 'afd', 20)
 
     for path in files_from_doc:
