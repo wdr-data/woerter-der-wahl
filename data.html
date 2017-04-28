@@ -5,13 +5,17 @@
     <title>Data</title>
 </head>
 <body>
-    <table>
-    {% for entry in data %}
-        <tr>
-            <td>{{ entry.word }}</td>
-            <td>{{ entry.count }}</td>
-        </tr>
+    {% for entry in lists %}
+        <h2>{{ entry.party }}</h2>
+        <table>
+            {% for word in entry.words %}
+            <tr>
+                <td>{{ word.word }}</td>
+                <td>{{ word.count }}</td>
+                <td>{{ Math.round(word.share*10000)/100 }} %</td>
+            </tr>
+            {% endfor %}
+        </table>
     {% endfor %}
-    </table>
 </body>
 </html>

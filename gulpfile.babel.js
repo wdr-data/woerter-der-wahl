@@ -122,13 +122,19 @@ gulp.task('data', cb => {
 
 gulp.task('data:prod', ['data'], () => gulp.src('output/**/*').pipe(gulp.dest(path.join(dist, 'output'))));
 
+const parties = ['spd', 'cdu', 'gruene', 'fdp', 'piraten', 'linke', 'afd'];
 gulp.task('data-vis', ['data'], () => gulp.src('data.html')
-        .pipe($.data(() => require('./output/gruene.json')))
-        .pipe($.swig())
-        .pipe(gulp.dest(dist))
+    .pipe($.data(() => { return {
+        lists: parties.map(party => { return {
+            party: party,
+            words: require(`./output/${party}.json`).data.slice(0, 30)
+        }; })
+    }; }))
+    .pipe($.swig())
+    .pipe(gulp.dest(dist))
 );
 
-gulp.task('build', ['data:prod', 'copy:dist', 'scripts', 'html', 'fonts', 'images', 'elements']);
+gulp.task('build', ['data:prod', 'copy:dist', 'scripts', 'html', 'fonts', 'images', 'elements', 'data-vis']);
 
 gulp.task('upload', ['build'], () => {
     const conn = ftp.create({
