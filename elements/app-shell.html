@@ -49,6 +49,7 @@
                 <span class="topline"></span>
             </div>
             <div class="text-wrapper">
+                <h4>[[ _textHeadline ]]</h4>
                 <template is="dom-repeat" items="[[ textContent ]]" as="col">
                     <div class="text-col">
                         <template is="dom-repeat" items="[[ col ]]" on-dom-change="doHighlighting">
@@ -105,6 +106,10 @@
                 _modalOpen: {
                     type: Boolean,
                     value: false
+                },
+                _textHeadline: {
+                    type: String,
+                    value: () => ""
                 }
             };
         }
@@ -227,6 +232,18 @@
                 }
                 return sum;
             }, []);
+
+            // set headline
+            this._textHeadline =
+                (party === 'all') ? (
+                    (word === null) ?
+                        "Zufällig gewählte Stellen für Top-30-Wörter" :
+                        `Zufällig gewählte Stellen für „${word.name}“`
+                ) : (
+                    (word === null) ?
+                        `Zufällig gewählte Stellen für Top-30-Wörter im ${partyMap[party]}-Wahlprogramm` :
+                        `Zufällig gewählte Stellen für „${word.name}“ im ${partyMap[party]}-Wahlprogramm`
+                );
 
             this._filteredWord = word;
         }
