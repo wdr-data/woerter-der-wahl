@@ -115,4 +115,8 @@ $content-margin: 40px
         .highlight
           font-weight: bold
 
-  @include partyColors('&.party-', 'color', ' .text-wrapper .highlight')
+        @include partyColors('&.party-', 'background-color', ' .highlight')
+        @include partyTextColors('&.party-', 'color', ' .highlight')
+
+  @include partyColors('&.party-', 'background-color', ' .highlight')
+  @include partyTextColors('&.party-', 'color', ' .highlight')
