@@ -22,7 +22,7 @@ require('dotenv').config({silent: true});
 
 const dist = 'build';
 
-gulp.task('styles', () => gulp.src('styles/{main,app,embed}.sass')
+gulp.task('styles', () => gulp.src('styles/{*, !_*}.sass')
     .pipe($.sass())
     .pipe(gulp.dest(path.join('.tmp', 'styles')))
 );
@@ -122,8 +122,8 @@ gulp.task('data', cb => {
 
 gulp.task('data:prod', ['data'], () => gulp.src('output/**/*').pipe(gulp.dest(path.join(dist, 'output'))));
 
-const parties = ['spd', 'cdu', 'gruene', 'fdp', 'piraten', 'linke', 'afd'];
-gulp.task('data-vis', ['data'], () => gulp.src('data.html')
+const parties = ['all', 'spd', 'cdu', 'gruene', 'fdp', 'piraten', 'linke', 'afd'];
+gulp.task('data-vis', ['styles', 'data'], () => gulp.src('data.html')
     .pipe($.data(() => ({
         lists: parties.map(party => ({
             party: party,
@@ -131,6 +131,14 @@ gulp.task('data-vis', ['data'], () => gulp.src('data.html')
         }))
     })))
     .pipe($.swig())
+    .pipe($.usemin({
+        path: './',
+        css: [
+            $.cssimport({ includePaths: ['styles'] }),
+            $.cleanCss(),
+            $.rev()
+        ]
+    }))
     .pipe(gulp.dest(dist))
 );
 

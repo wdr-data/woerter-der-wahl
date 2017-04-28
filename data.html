@@ -3,19 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <title>Data</title>
+
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/data.css">
+    <!-- endbuild -->
 </head>
 <body>
+
+{% include "partials/header.html" with { active: 'nachrichten' } %}
+
+<div class="category container">
+    <a href="http://www1.wdr.de/nachrichten/landespolitik/landtagswahl/index.html">Landtagswahl 2017</a>
+</div>
+
+<article id="content" class="container">
+
+    {% set partyMap = {
+        all: "Alle",
+        cdu: "CDU",
+        spd: "SPD",
+        gruene: "Grüne",
+        fdp: "FDP",
+        linke: "Linke",
+        piraten: "Piraten",
+        afd: "AFD"
+    } %}
+
     {% for entry in lists %}
-        <h2>{{ entry.party }}</h2>
+        <h2>{{ partyMap[entry.party] }}</h2>
         <table>
-            {% for word in entry.words %}
-            <tr>
-                <td>{{ word.word }}</td>
-                <td>{{ word.count }}</td>
-                <td>{{ Math.round(word.share*10000)/100 }} %</td>
-            </tr>
-            {% endfor %}
+            <thead>
+                <tr>
+                    <th>Wort</th>
+                    <th>Anzahl (abs.)</th>
+                    <th>Anzahl (relativ zu Gesamtprogramm)</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for word in entry.words %}
+                <tr>
+                    <td>{{ word.word }}</td>
+                    <td>{{ word.count }}</td>
+                    <td>{{ Math.round(word.share*10000)/100 }} %</td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     {% endfor %}
+
+</article>
+
+{% include "partials/breadcrumb.html" %}
+{% include "partials/footer.html" %}
+
+{% include "partials/webtrekk.html" %}
+
 </body>
 </html>

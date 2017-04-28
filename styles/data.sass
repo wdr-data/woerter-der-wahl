@@ -1,0 +1,40 @@
+*
+  box-sizing: border-box
+
+@import "../bower_components/normalize-css/normalize.css"
+@import "fonts.css"
+@import "variables"
+@import "icons"
+@import "globals"
+
+@import "header"
+@import "breadcrumb"
+@import "footer"
+
+@import "landtagswahl"
+
+#content.container
+  padding: 20px
+
+h2
+  margin-top: 30px
+  text-align: left
+
+table
+  width: 100%
+  border: none
+  border-collapse: collapse
+
+  thead
+    background-color: $wdr-blue
+    color: white
+
+  tr, th, td
+    border: none
+
+  th, td
+    text-align: left
+    padding: 5px
+
+  td
+    border-bottom: 1px solid black
