@@ -6,8 +6,8 @@
 
 <dom-module id="app-shell">
     <template>
-        <!-- build:css(.tmp/elements) ../styles/app.css -->
-        <link rel="stylesheet" href="../styles/app.css">
+        <!-- build:css(.tmp) styles/app.css -->
+        <link rel="stylesheet" href="styles/app.css">
         <!-- endbuild -->
 
         <template is="dom-if" if="[[ _modalOpen ]]">
@@ -32,7 +32,7 @@
                  on-word-click="selectedWord"
                  on-party-click="selectedParty"
                  on-back-click="goBack"></div>
-            <img src="../images/wdr_logo.svg" class="logo">
+            <img src="images/wdr_logo.svg" class="logo">
             <a href="data.html" class="data-link">Tabellen-Darstellung</a>
         </div>
 
