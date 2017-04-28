@@ -226,7 +226,7 @@
             const numCols = Math.min(Math.floor(window.innerWidth / 320), 3);
             this.textContent = _.chunk(baseData.map(word => {
                 const textParty = (party === 'all') ? word.party : party;
-                return this.limitText(this.texts[textParty][word.paragraph_index], word.position, word.party);
+                return this.limitText(textParty, word);
             }), Math.floor(baseData.length / numCols)).reduce((sum, val, key) => {
                 if(key >= numCols) {
                     sum[key-numCols].concat(val);
@@ -251,7 +251,9 @@
             this._filteredWord = word;
         }
 
-        limitText(text, pos, party) {
+        limitText(party, word) {
+            const pos = word.position;
+            const text = this.texts[party][word.paragraph_index];
             let start = text.lastIndexOf(". ", pos);
             start = start === -1 ? 0 : start+2;
             let end = text.indexOf(". ", pos);
