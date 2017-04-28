@@ -158,6 +158,7 @@ gulp.task('upload', ['build'], () => {
     });
 
     return gulp.src([path.join(dist, '**')]/*, { buffer: false }*/)
+        .pipe(conn.newer('/'))
         .pipe(conn.dest('/'));
 });
 
