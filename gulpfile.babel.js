@@ -1,4 +1,5 @@
 import gulp from 'gulp';
+import fs from 'fs';
 import path from 'path';
 import browserSync from 'browser-sync';
 import webpack from 'webpack';
@@ -11,6 +12,7 @@ import dlFonts from './scripts/fonts';
 import imageminJpegoptim from 'imagemin-jpegoptim';
 import ftp from 'vinyl-ftp';
 import merge from 'merge-stream';
+import marked from 'marked';
 const $ = gulpPlugins();
 
 import webpackConfigDev from './webpack.config.dev';
@@ -105,6 +107,7 @@ gulp.task('elements', ['styles'], () => gulp.src('elements/**/*')
             $.rev()
         ]
     }))
+    .pipe($.if('app-shell.html', $.template({ infotext: marked(fs.readFileSync('content/info.md').toString()) })))
     .pipe(gulp.dest(path.join(dist, 'elements')))
 );
 

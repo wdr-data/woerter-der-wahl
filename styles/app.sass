@@ -8,8 +8,48 @@
 @import "globals"
 
 @import "vis"
+@import "modal"
 
 $content-margin: 40px
+
+.menubar
+  background: #345c7e
+  text-transform: uppercase
+  color: white
+  line-height: 40px
+
+  .icon-info
+    float: left
+    color: white
+    text-decoration: none
+
+    &:before
+      content: "i"
+      text-transform: none
+      margin-right: 10px
+      border: 1px solid white
+      width: 20px
+      height: 20px
+      line-height: 22px
+      border-radius: 20px
+      display: inline-block
+      text-align: center
+
+    &:hover
+      background: $wdr-blue
+
+  h3
+    margin: 0
+    text-align: center
+    font-weight: normal
+    font-size: inherit
+
+  > *
+    border-right: 2px solid $wdr-blue
+    padding: 0 10px
+
+    &:last-child
+      border-right: none
 
 .content-wrapper
   .tab-wrapper

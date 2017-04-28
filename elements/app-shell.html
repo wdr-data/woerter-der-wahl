@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 <link rel="import" href="_lib.html">
 
 <dom-module id="app-shell">
@@ -7,6 +8,21 @@
         <!-- build:css(.tmp/elements) ../styles/app.css -->
         <link rel="stylesheet" href="../styles/app.css">
         <!-- endbuild -->
+
+        <template is="dom-if" if="[[ _modalOpen ]]">
+            <div class="modal" on-tap="closeModal">
+                <div class="modal-content">
+                    <span class="modal-close">&times;</span>
+
+                    <%= infotext %>
+                </div>
+            </div>
+        </template>
+
+        <div class="menubar">
+            <a href="#" class="icon-info" on-tap="openModal">Info</a>
+            <h3>Die Top 30 Begriffe</h3>
+        </div>
 
         <div class$="bubble_cloud party-[[ activeParty ]] [[ _visClass ]]" id="bubble_cloud1"
              on-word-click="selectedWord"
@@ -52,7 +68,7 @@
         afd: "AFD"
     };
 
-    class AppShell extends Polymer.Element {
+    class AppShell extends Polymer.GestureEventListeners(Polymer.Element) {
         static get is() {
             return 'app-shell';
         }
@@ -81,6 +97,10 @@
                 _visClass: {
                     type: String,
                     computed: 'getVisClass(activeWord)'
+                },
+                _modalOpen: {
+                    type: Boolean,
+                    value: false
                 }
             };
         }
@@ -261,6 +281,18 @@
 
         getVisClass(word) {
             return word !== null ? 'selection-active' : '';
+        }
+
+        openModal(ev) {
+            this._modalOpen = true;
+            ev.preventDefault();
+        }
+
+        closeModal(ev) {
+            if(ev.target == this.root.querySelector('.modal') ||
+                ev.target == this.root.querySelector('.modal-close')) {
+                this._modalOpen = false;
+            }
         }
     }
 
