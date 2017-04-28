@@ -1,0 +1,21 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="info-text">
+    <template>
+        <!-- build:css(.tmp/elements) ../styles/app.css -->
+        <link rel="stylesheet" href="../styles/app.css">
+        <!-- endbuild -->
+
+        <%= infotext %>
+    </template>
+</dom-module>
+
+<script>
+    class InfoText extends Polymer.Element {
+        static get is() {
+            return 'info-text';
+        }
+    }
+
+    customElements.define(InfoText.is, InfoText);
+</script>

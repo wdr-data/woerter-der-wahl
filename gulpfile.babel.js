@@ -102,12 +102,12 @@ gulp.task('elements', ['styles'], () => gulp.src('elements/**/*')
     .pipe($.usemin({
         path: './',
         css: [
-            $.cssimport({ includePaths: ['styles'] }),
-            $.cleanCss(),
-            $.rev()
+            () => $.cssimport({ includePaths: ['styles'] }),
+            () => $.cleanCss(),
+            () => $.rev()
         ]
     }))
-    .pipe($.if('app-shell.html', $.template({
+    .pipe($.if('info-text.html', $.template({
         infotext: marked(fs.readFileSync('content/info.md').toString(), { breaks: true })
     })))
     .pipe(gulp.dest(path.join(dist, 'elements')))
