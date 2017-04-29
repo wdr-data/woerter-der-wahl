@@ -44,6 +44,8 @@ Den Code zu 'Wörter der Wahl' stellen wir OpenSource zur Verfügung (MIT Licens
 
 [Piraten Wahlprogramm - html](http://smartgerecht.nrw/wahlprogramm/)
 
+[Linke Wahlprogramm - html](http://wahl2017.dielinke-nrw.de/programm/)
+
 [AFD Wahlprogramm - pdf aus dieser Seite](https://afd.nrw/landtagswahl/programm/)
 
 ### Credits:
