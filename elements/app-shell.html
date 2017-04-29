@@ -252,9 +252,10 @@
                 ((party === 'all') ?
                     this.parties.reduce((sum, party) => sum.concat(
                         (!(party in this.data[word.id].segments)) ? [] :
-                        Array.apply(null, Array(wordsPerParty))
-                            .map(() => Math.round(Math.random() * (this.data[word.id].segments[party].occurence.length-1)))
-                            .map(i => Object.assign(this.data[word.id].segments[party].occurence[i], { party: party }))
+                            this.data[word.id].segments[party].occurence
+                                .sort(() => Math.random()*2-1)
+                                .slice(0, Math.min(wordsPerParty, this.data[word.id].segments[party].occurence.length))
+                                .map(d => Object.assign(d, { party: party }))
                     ), []) :
                     (party in this.data[word.id].segments) ?
                         this.data[word.id].segments[party].occurence
