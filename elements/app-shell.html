@@ -213,11 +213,10 @@
             if(party !== this._filteredParty) {
                 this._bubbleData = dataHelpers.bubbleData(this.data, party);
                 this.cloud.updateData(this.prepareData(this._bubbleData.slice(0,wordCountBubbles)));
-                this._filteredParty = party;
             }
 
-            if(word !== null) {
-                if(party === 'all') {
+            if(party !== this._filteredParty || word !== this._filteredWord) {
+                if(party === 'all' && word !== null) {
                     this.cloud.createPartyBubbles(this.prepareData([])[0]); // will return only the selected word
                 } else {
                     this.cloud.destroyPartyBubbles();
@@ -289,6 +288,7 @@
                         `Zufällig gewählte Stellen für „${word.name}“ im ${partyMap[party]}-Wahlprogramm`
                 );
 
+            this._filteredParty = party;
             this._filteredWord = word;
         }
 
