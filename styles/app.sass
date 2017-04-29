@@ -141,7 +141,9 @@ $content-margin: 40px
 
       p
         position: relative
-        margin: 0 0 30px 0
+        margin: 0
+        padding-bottom: 30px
+        overflow: hidden
 
         &:after
           position: absolute
@@ -150,7 +152,7 @@ $content-margin: 40px
           width: 30px
           background: #000
           left: 0
-          bottom: -15px
+          bottom: 15px
 
         &:last-of-type:after
           height: 0
@@ -160,6 +162,62 @@ $content-margin: 40px
 
         @include partyColors('&.party-', 'background-color', ' .highlight')
         @include partyTextColors('&.party-', 'color', ' .highlight')
+        @include partyColors('&.party-', 'color', ' .more-link')
+
+        .more-link
+          float: right
+          cursor: pointer
+          font-weight: bold
+          text-decoration: none
+          visibility: hidden
+
+          &:before
+            content: ">"
+            margin-right: 5px
+
+        &:hover
+          .more-link
+            visibility: visible
 
   @include partyColors('&.party-', 'background-color', ' .highlight')
   @include partyTextColors('&.party-', 'color', ' .highlight')
+
+.paragraph-modal
+  position: absolute
+  top: 0
+  left: 0
+  bottom: 0
+  right: 0
+  z-index: 200
+  background: rgba(0,0,0,0.7)
+  visibility: hidden
+
+  &.shown
+    visibility: visible
+
+  .paragraph-modal-content
+    position: absolute
+    border: 1px solid $grey
+    border-radius: 5px
+    background: white
+    padding: 10px
+    margin: -10px
+    box-sizing: content-box
+    box-shadow: 1px 1px 5px 0 rgba(0,0,0,0.7)
+
+    .modal-close
+      position: absolute
+      top: -35px
+      right: 10px
+      font-size: 25px
+      color: #fff
+      cursor: pointer
+
+    p
+      margin: 0
+
+      .highlight
+        font-weight: bold
+
+    @include partyColors('.party-', 'background-color', ' .highlight')
+    @include partyTextColors('.party-', 'color', ' .highlight')

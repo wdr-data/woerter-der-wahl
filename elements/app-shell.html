@@ -6,6 +6,12 @@
 
 <dom-module id="app-shell">
     <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+
         <!-- build:css(.tmp) styles/app.css -->
         <link rel="stylesheet" href="styles/app.css">
         <!-- endbuild -->
@@ -62,6 +68,12 @@
                 </template>
             </div>
         </div>
+        <div class$="paragraph-modal [[ modalClass ]]" on-tap="textExpandClose">
+            <div class="paragraph-modal-content">
+                <span class="modal-close">&times;</span>
+                <p></p>
+            </div>
+        </div>
     </template>
 </dom-module>
 
@@ -111,6 +123,10 @@
                     value: false
                 },
                 _textHeadline: {
+                    type: String,
+                    value: () => ""
+                },
+                modalClass: {
                     type: String,
                     value: () => ""
                 }
@@ -264,7 +280,9 @@
                 text: text.substring(start, end),
                 pos: pos-start,
                 wordlen: wordEnd,
-                party: party
+                party: party,
+                start: start,
+                paragraph: word.paragraph_index
             };
         }
 
@@ -276,15 +294,29 @@
             const col = ev.target.parentElement;
             col.querySelectorAll('p').forEach(elem => {
                 const item = ev.target.modelForElement(elem).item;
+
                 elem.textContent = "";
-                elem.appendChild(document.createTextNode(item.text.substr(0, item.pos)));
-                const highlight = document.createElement('span');
-                highlight.textContent = item.text.substr(item.pos, item.wordlen);
-                highlight.className = 'highlight';
-                elem.appendChild(highlight);
-                elem.appendChild(document.createTextNode(item.text.substr(item.pos + item.wordlen)));
+                this.insertHighlight(elem, item);
+
+                const expandLink = document.createElement('a');
+                expandLink.textContent = 'mehr';
+                expandLink.className = 'more-link';
+                Polymer.Gestures.addListener(expandLink, 'tap', this.textExpandClick.bind(this));
+                elem.appendChild(expandLink);
+
                 elem.className = item.party ? 'party-' + item.party : '';
             });
+        }
+
+        insertHighlight(elem, item) {
+            elem.appendChild(document.createTextNode(item.text.substr(0, item.pos)));
+
+            const highlight = document.createElement('span');
+            highlight.textContent = item.text.substr(item.pos, item.wordlen);
+            highlight.className = 'highlight';
+            elem.appendChild(highlight);
+
+            elem.appendChild(document.createTextNode(item.text.substr(item.pos + item.wordlen)));
         }
 
         selectedWord(ev) {
@@ -318,6 +350,49 @@
             if(ev.target == this.root.querySelector('.modal') ||
                 ev.target == this.root.querySelector('.modal-close')) {
                 this._modalOpen = false;
+            }
+        }
+
+        textExpandClick(ev) {
+            const item =
+                ev.target.parentElement
+                    .parentElement
+                    .querySelector('dom-repeat')
+                    .modelForElement(ev.target.parentElement)
+                    .item;
+            const box_paragraph = ev.target.parentElement.getBoundingClientRect();
+            const box_highlight = ev.target.parentElement.querySelector('.highlight').getBoundingClientRect();
+
+            const modal = this.root.querySelector('.paragraph-modal-content');
+            modal.style.width = box_paragraph.width + 'px';
+
+            const text = modal.querySelector('p');
+            text.textContent = "";
+            this.insertHighlight(text, {
+                text: this.texts[item.party][item.paragraph],
+                pos: item.start + item.pos,
+                wordlen: item.wordlen
+            });
+            text.className = 'party-'+item.party;
+
+            const box_modal = modal.getBoundingClientRect();
+            const box_modal_highlight = text.querySelector('.highlight').getBoundingClientRect();
+
+            const top = box_highlight.top
+                - (box_modal_highlight.top - box_modal.top)
+                + document.body.scrollTop // make relative to page
+                + 10; // padding
+
+            modal.style.top = top + 'px';
+            modal.style.left = box_paragraph.left + 'px';
+
+            this.modalClass = 'shown';
+        }
+
+        textExpandClose(ev) {
+            const modal = this.root.querySelector('.paragraph-modal');
+            if(ev.target == modal || ev.target == modal.querySelector('.modal-close')) {
+                this.modalClass = '';
             }
         }
     }
