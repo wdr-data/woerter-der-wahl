@@ -92,6 +92,7 @@ def save_json(obj, party):
     out_file.close()
 
 results_sum = {}
+results_top = {}
 wordcount_sum = 0
 
 def append_result(result, party):
@@ -120,6 +121,13 @@ def get_result_sum():
     # turn results_sum dict into list
     return sorted(results_sum.values(), key=lambda x: x['count'], reverse=True)
 
+def save_result(paragraphs, path):
+    result = analyze(paragraphs)
+    append_result(result, path)
+    save_json(result,path)
+    save_text(paragraphs,path)
+
+
 def load_and_clean(file, path, minlen, ignore_empty_lines=False, afd_headings=False):
     paragraphs = []
     container = ''
@@ -144,10 +152,8 @@ def load_and_clean(file, path, minlen, ignore_empty_lines=False, afd_headings=Fa
         if re.search(r'[\.\?\!\"\'\“):]$', line):
             paragraphs.append(container[:-1])
             container = ''
-    result = analyze(paragraphs)
-    append_result(result, path)
-    save_json(result,path)
-    save_text(paragraphs,path)
+
+    return paragraphs
 
 
 if __name__=="__main__":
@@ -156,11 +162,13 @@ if __name__=="__main__":
     print('cdu')
     with open('data/cdu.txt') as f:
         f = [item.replace('', '').strip() for item in f]
-        load_and_clean(f, 'cdu', 70)
+        paragraphs = load_and_clean(f, 'cdu', 70)
+        save_result(paragraphs, 'cdu')
 
     print('afd')
     with open('data/afd.txt') as f:
-        load_and_clean(f, 'afd', 0, True, True)
+        paragraphs = load_and_clean(f, 'afd', 0, True, True)
+        save_result(paragraphs, 'afd')
 
     for path in files_from_doc:
         paragraphs = []
@@ -172,10 +180,7 @@ if __name__=="__main__":
                     continue
                 paragraphs.append(line)
 
-        result = analyze(paragraphs)
-        append_result(result, path)
-        save_json(result,path)
-        save_text(paragraphs,path)
+        save_result(paragraphs, path)
 
     results = get_result_sum()
     save_json(results, 'all')
