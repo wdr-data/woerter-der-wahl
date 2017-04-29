@@ -21,10 +21,12 @@
     "polymer": "Polymer/polymer#^2.0.0-rc.7",
     "webcomponentsjs": "^v1.0.0-rc.5",
     "iron-selector": "^1.5.3",
-    "neat": "^2.0.0"
+    "neat": "^2.0.0",
+    "app-route": "PolymerElements/app-route#2.0-preview"
   },
   "resolutions": {
     "polymer": "^2.0.0-rc.7",
-    "webcomponentsjs": "^v1.0.0-rc.5"
+    "webcomponentsjs": "^v1.0.0-rc.5",
+    "iron-location": "2.0-preview"
   }
 }

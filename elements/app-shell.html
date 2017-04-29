@@ -1,6 +1,8 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="_lib.html">
 <link rel="import" href="info-text.html">
 
@@ -15,6 +17,9 @@
         <!-- build:css(.tmp) styles/app.css -->
         <link rel="stylesheet" href="styles/app.css">
         <!-- endbuild -->
+
+        <app-location route="{{ route }}"></app-location>
+        <app-route route="{{ route }}" query-params="{{ urlQuery }}" pattern="/"></app-route>
 
         <template is="dom-if" if="[[ _modalOpen ]]">
             <div class="modal" on-tap="closeModal">
@@ -157,7 +162,8 @@
 
         static get observers() {
             return [
-                'filterData(activeParty, activeWord)'
+                'filterData(activeParty, activeWord)',
+                'paramsChanged(urlQuery.*)'
             ]
         }
 
@@ -182,6 +188,9 @@
                     .then(json => {
                         this.data = json.data;
                         this.cloud = BubbleCloud(partyMap)(elem, []);
+                        if('word' in this.urlQuery) {
+                            this.setWordFromParam(this.urlQuery.word);
+                        }
                     }),
 
                 Promise.all(this.parties.map(party => fetch('output/'+party+'.txt')))
@@ -213,6 +222,7 @@
             if(party !== this._filteredParty) {
                 this._bubbleData = dataHelpers.bubbleData(this.data, party);
                 this.cloud.updateData(this.prepareData(this._bubbleData.slice(0,wordCountBubbles)));
+                this.set('urlQuery.party', (party === 'all') ? null : party);
             }
 
             if(party !== this._filteredParty || word !== this._filteredWord) {
@@ -221,6 +231,11 @@
                 } else {
                     this.cloud.destroyPartyBubbles();
                 }
+            }
+
+            if(word !== this._filteredWord) {
+                this.cloud.selectNode(word ? { id: word.id+1 } : null);
+                this.set('urlQuery.word', word ? word.name : null);
             }
 
             const wordCount = 20;
@@ -350,7 +365,6 @@
                 name: ev.detail.name,
                 id: ev.detail.id-1
             };
-            this.cloud.selectNode(ev.detail);
         }
 
         selectedParty(ev) {
@@ -359,8 +373,6 @@
 
         goBack() {
             this.activeWord = null;
-            this.cloud.selectNode(null);
-            this.cloud.destroyPartyBubbles();
         }
 
         getVisClass(word) {
@@ -434,6 +446,34 @@
 
         refreshData() {
             this.filterData(this.activeParty, this.activeWord);
+        }
+
+        paramsChanged(change) {
+            if(!change || !change.base) {
+                return;
+            }
+
+            const params = change.base;
+            console.log(change.base);
+
+            if('party' in params) {
+                this.activeParty = params.party;
+            }
+
+            if('word' in params) {
+                this.setWordFromParam(params.word);
+            }
+        }
+
+        setWordFromParam(word) {
+            // find word in data
+            const hit = _.findIndex(this.data, d => d.word.toLowerCase() === word.toLowerCase());
+            if(hit > -1) {
+                this.activeWord = {
+                    id: hit,
+                    name: this.data[hit].word
+                };
+            }
         }
     }
 
