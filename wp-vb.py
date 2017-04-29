@@ -120,13 +120,13 @@ def get_result_sum():
     # turn results_sum dict into list
     return sorted(results_sum.values(), key=lambda x: x['count'], reverse=True)
 
-def load_and_clean(file, path, minlen):
+def load_and_clean(file, path, minlen, ignore_empty_lines=False, afd_headings=False):
     paragraphs = []
     container = ''
     for line in file:
         line = line.replace('\n', '')
-        if len(line) == 0 and len(container) > 0:
-            if not container.endswith('- '):
+        if len(line) == 0:
+            if not container.endswith('- ') and len(container) > 0 and not ignore_empty_lines:
                 paragraphs.append(container[:-1])
                 container = ''
             continue
@@ -137,6 +137,9 @@ def load_and_clean(file, path, minlen):
             if re.search(r'^[a-zäüö]', line):
                 container = container[:-1]
             container = container[:-1]
+        if re.search(r'^\d{1,2}\.\d{2}', line) and len(container) > 0 and afd_headings:
+            paragraphs.append(container[:-1])
+            container = ''
         container += line + ' '
         if re.search(r'[\.\?\!\"\'\“):]$', line):
             paragraphs.append(container[:-1])
@@ -157,7 +160,7 @@ if __name__=="__main__":
 
     print('afd')
     with open('data/afd.txt') as f:
-        load_and_clean(f, 'afd', 20)
+        load_and_clean(f, 'afd', 0, True, True)
 
     for path in files_from_doc:
         paragraphs = []
