@@ -92,13 +92,13 @@ def save_json(obj, party):
     out_file.close()
 
 results_sum = {}
-results_top = {}
+topresult_words = []
 wordcount_sum = 0
 
 def append_result(result, party):
     global wordcount_sum
 
-    for entry in result:
+    for key, entry in enumerate(result):
         stem = entry['stem']
         if stem not in results_sum:
             results_sum[stem] = {
@@ -116,10 +116,17 @@ def append_result(result, party):
             results_sum[stem]['word'] = entry['word']
             results_sum[stem]['single_count'] = entry['count']
 
+        if key < 30 and stem not in topresult_words:
+            topresult_words.append(stem)
+
 def get_result_sum():
     add_share(results_sum, wordcount_sum)
     # turn results_sum dict into list
     return sorted(results_sum.values(), key=lambda x: x['count'], reverse=True)
+
+def get_result_top():
+    words = [results_sum[stem] for stem in topresult_words]
+    return sorted(words, key=lambda x: x['count'], reverse=True)
 
 def save_result(paragraphs, path):
     result = analyze(paragraphs)
@@ -184,4 +191,8 @@ if __name__=="__main__":
 
     results = get_result_sum()
     save_json(results, 'all')
+
+    topresults = get_result_top()
+    save_json(topresults, 'top30')
+
     print("✅ Done")

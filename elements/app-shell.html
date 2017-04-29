@@ -177,7 +177,7 @@
             const elem = this.shadowRoot.querySelector('#bubble_cloud1');
 
             Promise.all([
-                fetch('output/all.json')
+                fetch('output/top30.json')
                     .then(res => res.json())
                     .then(json => {
                         this.data = json.data;
