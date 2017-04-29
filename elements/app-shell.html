@@ -72,6 +72,9 @@
             <div class="paragraph-modal-content">
                 <span class="modal-close">&times;</span>
                 <p></p>
+                <a class="program-link" href="[[ getPartyLink(modalParty) ]]" target="_blank">
+                    Zum <span class="party">[[ getPartyName(modalParty) ]]</span>-Wahlprogramm
+                </a>
             </div>
         </div>
     </template>
@@ -85,7 +88,17 @@
         fdp: "FDP",
         linke: "Linke",
         piraten: "Piraten",
-        afd: "AFD"
+        afd: "AfD"
+    };
+
+    const partyLinks = {
+        cdu: "https://www.cdu-nrw.de/sites/default/files/media/docs/2017-04-01_regierungsprogramm_cdu_fuer_nrw_2017-2022.pdf",
+        spd: "https://www.nrwspd.de/der-nrw-plan/",
+        gruene: "https://gruene-nrw.de/dateien/wahlprogramm2017.pdf",
+        fdp: "https://www.fdp.nrw/sites/default/files/2017-01/Landtagswahlprogramm.pdf",
+        linke: "http://wahl2017.dielinke-nrw.de/nc/programm/",
+        piraten: "http://smartgerecht.nrw/wahlprogramm/",
+        afd: "https://afd.nrw/landtagswahl/programm/"
     };
 
     class AppShell extends Polymer.GestureEventListeners(Polymer.Element) {
@@ -127,6 +140,10 @@
                     value: () => ""
                 },
                 modalClass: {
+                    type: String,
+                    value: () => ""
+                },
+                modalParty: {
                     type: String,
                     value: () => ""
                 }
@@ -360,6 +377,9 @@
                     .querySelector('dom-repeat')
                     .modelForElement(ev.target.parentElement)
                     .item;
+
+            this.modalParty = item.party;
+
             const box_paragraph = ev.target.parentElement.getBoundingClientRect();
             const box_highlight = ev.target.parentElement.querySelector('.highlight').getBoundingClientRect();
 
@@ -373,7 +393,6 @@
                 pos: item.start + item.pos,
                 wordlen: item.wordlen
             });
-            text.className = 'party-'+item.party;
 
             const box_modal = modal.getBoundingClientRect();
             const box_modal_highlight = text.querySelector('.highlight').getBoundingClientRect();
@@ -386,7 +405,7 @@
             modal.style.top = top + 'px';
             modal.style.left = box_paragraph.left + 'px';
 
-            this.modalClass = 'shown';
+            this.modalClass = 'shown party-'+item.party;
         }
 
         textExpandClose(ev) {
@@ -394,6 +413,14 @@
             if(ev.target == modal || ev.target == modal.querySelector('.modal-close')) {
                 this.modalClass = '';
             }
+        }
+
+        getPartyName(party) {
+            return party in partyMap ? partyMap[party] : "";
+        }
+
+        getPartyLink(party) {
+            return party in partyLinks ? partyLinks[party] : "";
         }
     }
 

@@ -219,5 +219,12 @@ $content-margin: 40px
       .highlight
         font-weight: bold
 
-    @include partyColors('.party-', 'background-color', ' .highlight')
-    @include partyTextColors('.party-', 'color', ' .highlight')
+    .program-link
+      position: absolute
+      color: white
+      font-weight: bold
+      bottom: -30px
+      right: 10px
+
+  @include partyColors('&.party-', 'background-color', ' .highlight')
+  @include partyTextColors('&.party-', 'color', ' .highlight')
