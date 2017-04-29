@@ -107,7 +107,7 @@ gulp.task('elements', ['styles'], () => gulp.src('elements/**/*', { base: '.' })
             () => $.rev()
         ]
     }))
-    .pipe($.if('info-text.html', $.template({
+    .pipe($.if('**/info-text.html', $.template({
         infotext: marked(fs.readFileSync('content/info.md').toString(), { breaks: true })
     })))
     .pipe($.if('*.css', $.rename({ dirname: 'styles' })))
