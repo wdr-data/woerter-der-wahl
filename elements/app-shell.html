@@ -267,7 +267,7 @@
             this.textContent = _.chunk(baseData.map(word => {
                 const textParty = (party === 'all') ? word.party : party;
                 return this.limitText(textParty, word);
-            }), Math.floor(baseData.length / numCols)).reduce((sum, val, key) => {
+            }), Math.ceil(baseData.length / numCols)).reduce((sum, val, key) => {
                 if(key >= numCols) {
                     sum[key-numCols].concat(val);
                 } else {
