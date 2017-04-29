@@ -1,5 +1,6 @@
 ab
 aber
+alle
 allein
 allem
 allen
@@ -561,6 +562,7 @@ wieviel
 wiewohl
 will
 willst
+wir
 wird
 wirklich
 wirst
