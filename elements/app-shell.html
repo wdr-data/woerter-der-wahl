@@ -171,19 +171,22 @@
 
             const elem = this.shadowRoot.querySelector('#bubble_cloud1');
 
-            fetch('output/all.json')
-                .then(res => res.json())
-                .then(json => {
-                    this.data = json.data;
-                    this.cloud = BubbleCloud(partyMap)(elem, []);
-                    this.filterData(this.activeParty, this.activeWord);
-                });
+            Promise.all([
+                fetch('output/all.json')
+                    .then(res => res.json())
+                    .then(json => {
+                        this.data = json.data;
+                        this.cloud = BubbleCloud(partyMap)(elem, []);
+                    }),
 
-            Promise.all(this.parties.map(party => fetch('output/'+party+'.txt')))
-                .then(results => Promise.all(results.map(resp => resp.text())))
-                .then(results => results.forEach((item, key) => {
-                    this.texts[this.parties[key]] = item.split('\n');
-                }));
+                Promise.all(this.parties.map(party => fetch('output/'+party+'.txt')))
+                    .then(results => Promise.all(results.map(resp => resp.text())))
+                    .then(results => results.forEach((item, key) => {
+                        this.texts[this.parties[key]] = item.split('\n');
+                    }))
+            ]).then(() =>
+                this.filterData(this.activeParty, this.activeWord)
+            );
         }
 
         prepareData(data) {
