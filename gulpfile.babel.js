@@ -98,7 +98,7 @@ gulp.task('images', function() {
         .pipe(gulp.dest(path.join(dist, 'images')));
 });
 
-gulp.task('elements', ['styles'], () => gulp.src('elements/**/*')
+gulp.task('elements', ['styles'], () => gulp.src('elements/**/*', { base: '.' })
     .pipe($.usemin({
         path: './',
         css: [
@@ -110,7 +110,8 @@ gulp.task('elements', ['styles'], () => gulp.src('elements/**/*')
     .pipe($.if('info-text.html', $.template({
         infotext: marked(fs.readFileSync('content/info.md').toString(), { breaks: true })
     })))
-    .pipe(gulp.dest(path.join(dist, 'elements')))
+    .pipe($.if('*.css', $.rename({ dirname: 'styles' })))
+    .pipe(gulp.dest(path.join(dist)))
 );
 
 gulp.task('copy:dist', () => gulp.src([
