@@ -105,12 +105,25 @@
         &:hover
           stroke: none
 
+        &.value-null
+          fill: none !important
+          stroke: #9f9f9f !important
+
     .word
       opacity: 0.1
       color: white
 
       &.selected
         opacity: 1
+
+      &.value-null
+        color: #9f9f9f !important
+
+        &:after
+          content: "kommt nicht vor"
+          font-size: 10px
+          margin-top: 7px
+          display: block
 
     @include partyTextColors('&.party-', 'color', ' .word.selected')
 
