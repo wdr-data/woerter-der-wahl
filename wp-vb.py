@@ -56,7 +56,7 @@ def analyze(paragraphs):
     def group_by_stem(words):
         stemmed_words = {}
         for word in words.keys():
-            stemmed = stemmer.stemWord(word)
+            stemmed = stemmer.stemWord(word).lower()
             if stemmed in stemmed_words:
                 if words[word]['count'] > stemmed_words[stemmed]['single_count']:
                     stemmed_words[stemmed]['word'] = word
