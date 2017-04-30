@@ -53,6 +53,9 @@
                  on-back-click="goBack"></div>
             <img src="images/wdr_logo.svg" class="logo">
             <a href="data.html" class="data-link">Tabellen-Darstellung</a>
+            <template is="dom-if" if="[[ _customWords.length ]]">
+                <a class="overlay-button shown" on-tap="clearCustomWords">Top30 anzeigen</a>
+            </template>
         </div>
 
         <div class$="content-wrapper party-[[ activeParty ]]">
@@ -118,6 +121,8 @@
         piraten: "http://smartgerecht.nrw/wahlprogramm/",
         afd: "https://afd.nrw/landtagswahl/programm/"
     };
+
+    const wordCountBubbles = 30;
 
     class AppShell extends Polymer.GestureEventListeners(Polymer.Element) {
         static get is() {
@@ -243,11 +248,8 @@
                 return;
             }
 
-            const wordCountBubbles = 30;
-
             if(party !== this._filteredParty) {
-                this._bubbleData = dataHelpers.bubbleData(this.data, party);
-                this.cloud.setData(this.prepareData(this._bubbleData.slice(0,wordCountBubbles)));
+                this.updateCloud(party);
                 this.set('urlQuery.party', (party === 'all') ? null : party);
             }
 
@@ -335,6 +337,11 @@
 
             this._filteredParty = party;
             this._filteredWord = word;
+        }
+
+        updateCloud(party) {
+            this._bubbleData = dataHelpers.bubbleData(this.data, party);
+            this.cloud.setData(this.prepareData(this._bubbleData.slice(0,wordCountBubbles)));
         }
 
         getWordById(id) {
@@ -599,6 +606,13 @@
                 this._getIndexEntry('words', word, 4)
                     .then(entries => Object.assign(entries[word], { id: entries[word].idx }))
             ));
+        }
+
+        clearCustomWords() {
+            this.data = this._topData;
+            this._customWords = [];
+            this.updateCloud(this.activeParty);
+            this.filterData(this.activeParty, this.activeWord);
         }
     }
 
