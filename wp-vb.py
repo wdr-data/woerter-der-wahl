@@ -38,6 +38,8 @@ def analyze(paragraphs):
             if len(word) < 3 or not re.match('^[A-Za-z]', word) or test_stopwords(word):
                 counter += end
                 continue
+            if word.endswith('-'):
+                word = word[:-1]
             word_count += 1
             if word in counted_words.keys():
                 counted_words[word]['count'] += 1
