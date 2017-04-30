@@ -35,10 +35,7 @@ def analyze(paragraphs):
             else:
                 word = current_paragraph[:pos.start()]
                 end = pos.end()
-            if not re.match('^[A-Za-z]', word):
-                counter += end
-                continue
-            if test_stopwords(word):
+            if len(word) < 3 or not re.match('^[A-Za-z]', word) or test_stopwords(word):
                 counter += end
                 continue
             word_count += 1
