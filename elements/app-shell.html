@@ -35,6 +35,14 @@
 
         <div class="menubar">
             <a href="#" class="icon-info" on-tap="openModal">Info</a>
+            <div class="word-add-container">
+                <input type="text" placeholder="Begriff hinzufügen" class="word-input" value="{{searchterm::keyup}}">
+                <div class="search-completion">
+                    <template is="dom-repeat" items="[[ _searchCompletion ]]">
+                        <span class="word" on-tap="completionTapped">[[ item ]]</span>
+                    </template>
+                </div>
+            </div>
             <h3>Die Top 30 Begriffe</h3>
         </div>
 
@@ -156,6 +164,18 @@
                 modalParty: {
                     type: String,
                     value: () => ""
+                },
+                searchterm: {
+                    type: String,
+                    observer: 'searchChanged'
+                },
+                _searchCompletion: {
+                    type: Array,
+                    value: () => []
+                },
+                _customWords: {
+                    type: Array,
+                    value: () => []
                 }
             };
         }
@@ -175,6 +195,7 @@
             this.texts = {};
             this._filteredParty = '';
             this._filteredWord = null;
+            this._cache = { index: {}, words: {} };
         }
 
         connectedCallback() {
@@ -186,7 +207,8 @@
                 fetch('output/top30.json')
                     .then(res => res.json())
                     .then(json => {
-                        this.data = json.data;
+                        this._topData = json.data;
+                        this.data = this._topData;
                         this.cloud = BubbleCloud(elem, partyMap);
                         if('word' in this.urlQuery) {
                             this.setWordFromParam(this.urlQuery.word);
@@ -204,11 +226,11 @@
         }
 
         prepareData(data) {
-            const add = (this.activeWord !== null && !_.find(data, (d, key) => (d.id ? d.id-1 : key) === this.activeWord.id)) ?
-                [Object.assign((this.activeParty === 'all') ?
-                    this.data[this.activeWord.id] :
-                    dataHelpers.transformForParty(this.activeParty)(this.data[this.activeWord.id]),
-                { id: this.activeWord.id+1 })] : [];
+            const add = (this.activeWord !== null && !_.find(data, (d, key) => (d.id ? d.id : key) === this.activeWord.id)) ?
+                [Object.assign({}, (this.activeParty === 'all') ?
+                    this.getWordById(this.activeWord.id) :
+                    dataHelpers.transformForParty(this.activeParty)(this.getWordById(this.activeWord.id)),
+                { id: this.activeWord.id })] : [];
             return data.concat(add).map(dataHelpers.prepareData);
         }
 
@@ -242,6 +264,8 @@
             const wordsForAll = Math.round(wordCount / 2);
             const wordsPerParty = Math.round(wordCount / 4);
 
+            const currentWord = !!word ? this.getWordById(word.id) : null;
+
             const baseData = (!word) ?
                 ((party === 'all') ?
                     this._bubbleData
@@ -260,20 +284,21 @@
                         .slice(0, wordCountBubbles)
                         .sort(() => Math.random()*2-1)
                         .slice(0,wordCount)
+                        .filter(word => word.occurence.length > 0)
                         .map(
                             word => word.occurence[Math.floor(Math.random() * word.occurence.length)]
                         )
                 ) :
                 ((party === 'all') ?
                     this.parties.reduce((sum, party) => sum.concat(
-                        (!(party in this.data[word.id].segments)) ? [] :
-                            this.data[word.id].segments[party].occurence
+                        (!(party in currentWord.segments)) ? [] :
+                            currentWord.segments[party].occurence
                                 .sort(() => Math.random()*2-1)
-                                .slice(0, Math.min(wordsPerParty, this.data[word.id].segments[party].occurence.length))
+                                .slice(0, Math.min(wordsPerParty, currentWord.segments[party].occurence.length))
                                 .map(d => Object.assign(d, { party: party }))
                     ), []) :
-                    (party in this.data[word.id].segments) ?
-                        this.data[word.id].segments[party].occurence
+                    (party in currentWord.segments) ?
+                        currentWord.segments[party].occurence
                             .sort(() => Math.random()*2-1)
                             .slice(0, wordCount) :
                         []
@@ -306,6 +331,10 @@
 
             this._filteredParty = party;
             this._filteredWord = word;
+        }
+
+        getWordById(id) {
+            return _.find(this.data, (d, k) => (d.id || k) === id);
         }
 
         limitText(party, word) {
@@ -456,7 +485,11 @@
             const params = change.base;
 
             if('party' in params) {
-                this.activeParty = params.party;
+                if(this.parties.indexOf(params.party) !== -1) {
+                    this.activeParty = params.party;
+                } else {
+                    this.set('urlQuery.party', '');
+                }
             }
 
             if('word' in params) {
@@ -469,10 +502,72 @@
             const hit = _.findIndex(this.data, d => d.word.toLowerCase() === word.toLowerCase());
             if(hit > -1) {
                 this.activeWord = {
-                    id: hit,
+                    id: this.data[hit].id || hit,
                     name: this.data[hit].word
                 };
+            } else {
+                this.set('urlQuery.word', '');
             }
+        }
+
+        searchChanged(term) {
+            if(term.length < 2) {
+                this._searchCompletion = [];
+                return;
+            }
+
+            this._getIndexEntry('index', term, 2)
+                .then(words => {
+                    this._searchCompletion = words
+                        .filter(word => word.toLowerCase().startsWith(term.toLowerCase()))
+                        .slice(0,5);
+                });
+        }
+
+        _getIndexEntry(type, term, len) {
+            const letter = term.toLowerCase().replace(/[^a-z]/g, '-').substr(0,len);
+            if(!(letter in this._cache[type])) {
+                return fetch(`output/${type}/${letter}.json`)
+                    .then(res => res.ok ? res : Promise.reject("not found"))
+                    .then(file => file.json())
+                    .then(json => {
+                        this._cache[type][letter] = json;
+                        return json;
+                    });
+            } else {
+                return Promise.resolve(this._cache[type][letter]);
+            }
+        }
+
+        completionTapped(ev) {
+            const word = ev.model.item;
+            this._getIndexEntry('words', word, 4)
+                .then(words => words[word])
+                .then(word => this.addCustomWord(word));
+            this.searchterm = "";
+        }
+
+        addCustomWord(word) {
+            if(this._customWords.indexOf(word.word) !== -1) {
+                return;
+            }
+            if(Object.keys(this._customWords).length === 0) {
+                this.data = [];
+                this.cloud.setData([]);
+            }
+            this.activeWord = null;
+
+            this._customWords.push(word.word);
+            word.id = word.idx;
+            this.data.push(word);
+            this._bubbleData = dataHelpers.bubbleData(this.data, this.activeParty);
+
+            const visData = dataHelpers.prepareData(
+                (this.activeParty === 'all') ? word : dataHelpers.transformForParty(this.activeParty)(word, word.idx),
+                word.idx
+            );
+            this.cloud.addNode(visData);
+            this.filterData(this.activeParty, this.activeWord);
         }
     }
 

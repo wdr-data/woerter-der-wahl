@@ -34,7 +34,11 @@
       stroke: #444444
       stroke-width: 2px
 
+    &.value-null
+      fill: rgba(0,0,0,0) !important
+
   @include partyColors('&.party-', 'fill', ' .bubble')
+  @include partyColors('&.party-', 'stroke', ' .bubble.value-null')
 
   .text-container
     overflow: hidden
@@ -64,6 +68,7 @@
       text-align: center
 
   @include partyTextColors('&.party-', 'color', ' .text-container .word')
+  @include partyColors('&.party-', 'color', ' .text-container .word.value-null')
 
   .center-border
     fill: none
@@ -124,14 +129,14 @@
       &.selected
         opacity: 1
 
-      &.value-null
-        color: #9f9f9f !important
+        &.value-null
+          color: #9f9f9f !important
 
-        &:after
-          content: "kommt nicht vor"
-          font-size: 10px
-          margin-top: 7px
-          display: block
+          &:after
+            content: "kommt nicht vor"
+            font-size: 10px
+            margin-top: 7px
+            display: block
 
     @include partyTextColors('&.party-', 'color', ' .word.selected')
 

@@ -11,9 +11,10 @@
 @import "modal"
 
 $content-margin: 40px
+$menubar-color: #345c7e
 
 .menubar
-  background: #345c7e
+  background: $menubar-color
   text-transform: uppercase
   color: white
   line-height: 40px
@@ -22,6 +23,7 @@ $content-margin: 40px
     float: left
     color: white
     text-decoration: none
+    border-right: 2px solid $wdr-blue
 
     &:before
       content: "i"
@@ -44,12 +46,45 @@ $content-margin: 40px
     font-weight: normal
     font-size: inherit
 
-  > *
-    border-right: 2px solid $wdr-blue
-    padding: 0 10px
+  .word-add-container
+    position: relative
+    float: right
+    border-left: 2px solid $wdr-blue
 
-    &:last-child
-      border-right: none
+    .word-input
+      display: block
+      height: 40px
+      width: 250px
+      font-size: inherit
+      border: none
+      outline: none
+      background: transparent
+      color: inherit
+
+      &::placeholder
+        color: darken(white, 20%)
+
+    .search-completion
+      position: absolute
+      z-index: 200
+      left: -2px
+      right: 0
+      color: white
+      background: $menubar-color
+      border: 2px solid $wdr-blue
+      text-transform: none
+
+      .word
+        display: block
+        padding: 8px 10px
+        line-height: normal
+        cursor: pointer
+
+        &:hover
+          background: $wdr-blue
+
+  > *
+    padding: 0 10px
 
 .content-wrapper
   .tab-wrapper

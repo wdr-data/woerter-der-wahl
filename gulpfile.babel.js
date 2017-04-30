@@ -13,6 +13,7 @@ import imageminJpegoptim from 'imagemin-jpegoptim';
 import ftp from 'vinyl-ftp';
 import merge from 'merge-stream';
 import marked from 'marked';
+import buildIndex from './build-index';
 const $ = gulpPlugins();
 
 import webpackConfigDev from './webpack.config.dev';
@@ -120,11 +121,15 @@ gulp.task('copy:dist', () => gulp.src([
         .pipe(gulp.dest(dist))
 );
 
-gulp.task('data', cb => {
+gulp.task('data-analyze', cb => {
     PythonShell.run('wp-vb.py', {
         pythonPath: 'python3'
     }, cb);
 });
+
+gulp.task('data-index', ['data-analyze'], () => buildIndex());
+
+gulp.task('data', ['data-analyze', 'data-index']);
 
 gulp.task('data:prod', ['data'], () => gulp.src('output/**/*').pipe(gulp.dest(path.join(dist, 'output'))));
 
