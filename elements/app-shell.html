@@ -488,7 +488,7 @@
                 if(this.parties.indexOf(params.party) !== -1) {
                     this.activeParty = params.party;
                 } else {
-                    this.set('urlQuery.party', '');
+                    this.set('urlQuery.party', null);
                 }
             }
 
@@ -498,6 +498,10 @@
         }
 
         setWordFromParam(word) {
+            if(!word || !this.data) {
+                return;
+            }
+
             // find word in data
             const hit = _.findIndex(this.data, d => d.word.toLowerCase() === word.toLowerCase());
             if(hit > -1) {
@@ -506,7 +510,7 @@
                     name: this.data[hit].word
                 };
             } else {
-                this.set('urlQuery.word', '');
+                this.set('urlQuery.word', null);
             }
         }
 
