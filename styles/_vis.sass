@@ -81,31 +81,6 @@
 
   @include partyTextColors('.party-bubbles #word-', 'color')
 
-  .back-button
-    display: none
-    position: absolute
-    top: 90px
-    left: 50%
-    background: #004e86
-    color: white
-    padding: 0 15px 0 10px
-    text-transform: uppercase
-    text-decoration: none
-    font-size: 16px
-    line-height: 32px
-    cursor: pointer
-
-    &.shown
-      display: block
-
-    &:before
-      content: "\d7"
-      margin-right: 13px
-      font-size: 38px
-      color: #909090
-      line-height: 20px
-      vertical-align: -6px
-
   // selected state
   &.selection-active
     .bubble
@@ -147,3 +122,28 @@
     .party-bubbles
       .word
         opacity: 1
+
+.overlay-button
+  display: none
+  position: absolute
+  top: 90px
+  left: 50%
+  background: #004e86
+  color: white
+  padding: 0 15px 0 10px
+  text-transform: uppercase
+  text-decoration: none
+  font-size: 16px
+  line-height: 32px
+  cursor: pointer
+
+  &.shown
+    display: block
+
+  &:before
+    content: "\d7"
+    margin-right: 13px
+    font-size: 38px
+    color: #909090
+    line-height: 20px
+    vertical-align: -6px
