@@ -5,9 +5,8 @@ import * as helpers from './lib/data_helpers';
 
 (function() {
     const params = qs.parse(window.location.search.substr(1));
-    console.log(params);
 
-    fetch('output/all.json')
+    fetch('output/top30.json')
         .then(res => res.json())
         .then(json => {
             const bubbles = json.data;
