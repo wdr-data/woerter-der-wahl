@@ -13,6 +13,6 @@ import * as helpers from './lib/data_helpers';
             const data = helpers.bubbleData(bubbles, params.party || 'all').map(helpers.prepareData).slice(0, 30);
             const elem = document.getElementById('bubbleCloudVis');
             elem.classList.add('party-'+(params.party || 'all'));
-            BubbleCloud()(elem, data);
+            BubbleCloud(elem).setData(data);
         });
 })();

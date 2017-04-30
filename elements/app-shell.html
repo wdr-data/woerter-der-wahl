@@ -187,7 +187,7 @@
                     .then(res => res.json())
                     .then(json => {
                         this.data = json.data;
-                        this.cloud = BubbleCloud(partyMap)(elem, []);
+                        this.cloud = BubbleCloud(elem, partyMap);
                         if('word' in this.urlQuery) {
                             this.setWordFromParam(this.urlQuery.word);
                         }
@@ -221,7 +221,7 @@
 
             if(party !== this._filteredParty) {
                 this._bubbleData = dataHelpers.bubbleData(this.data, party);
-                this.cloud.updateData(this.prepareData(this._bubbleData.slice(0,wordCountBubbles)));
+                this.cloud.setData(this.prepareData(this._bubbleData.slice(0,wordCountBubbles)));
                 this.set('urlQuery.party', (party === 'all') ? null : party);
             }
 
