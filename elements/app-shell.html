@@ -597,7 +597,7 @@
         customWordData() {
             return Promise.all(this._customWords.map(word =>
                 this._getIndexEntry('words', word, 4)
-                    .then(entries => entries[word])
+                    .then(entries => Object.assign(entries[word], { id: entries[word].idx }))
             ));
         }
     }
