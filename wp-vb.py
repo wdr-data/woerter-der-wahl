@@ -169,7 +169,7 @@ if __name__=="__main__":
     print('cdu')
     with open('data/cdu.txt') as f:
         f = [item.replace('', '').strip() for item in f]
-        paragraphs = load_and_clean(f, 'cdu', 70)
+        paragraphs = load_and_clean(f, 'cdu', 40, True)
         save_result(paragraphs, 'cdu')
 
     print('afd')
