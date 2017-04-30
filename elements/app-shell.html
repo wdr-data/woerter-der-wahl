@@ -183,7 +183,8 @@
         static get observers() {
             return [
                 'filterData(activeParty, activeWord)',
-                'paramsChanged(urlQuery.*)'
+                'paramsChanged(urlQuery.*)',
+                'customWordsChanged(_customWords.*)'
             ]
         }
 
@@ -208,7 +209,10 @@
                     .then(res => res.json())
                     .then(json => {
                         this._topData = json.data;
-                        this.data = this._topData;
+                        return this._customWords.length > 0 ? this.customWordData() : this._topData;
+                    })
+                    .then(data => {
+                        this.data = data;
                         this.cloud = BubbleCloud(elem, partyMap);
                         if('word' in this.urlQuery) {
                             this.setWordFromParam(this.urlQuery.word);
@@ -495,6 +499,10 @@
             if('word' in params) {
                 this.setWordFromParam(params.word);
             }
+
+            if('customwords' in params && !!params.customwords) {
+                this._customWords = params.customwords.split('+');
+            }
         }
 
         setWordFromParam(word) {
@@ -561,7 +569,7 @@
             }
             this.activeWord = null;
 
-            this._customWords.push(word.word);
+            this.push('_customWords', word.word);
             word.id = word.idx;
             this.data.push(word);
             this._bubbleData = dataHelpers.bubbleData(this.data, this.activeParty);
@@ -572,6 +580,25 @@
             );
             this.cloud.addNode(visData);
             this.filterData(this.activeParty, this.activeWord);
+        }
+
+        customWordsChanged(change) {
+            if(!change || !change.base) {
+                return;
+            }
+
+            const serialized = change.base.length > 0 ? change.base.join('+') : null;
+            if(this.urlQuery.customwords === serialized) {
+                return;
+            }
+            this.set('urlQuery.customwords', serialized);
+        }
+
+        customWordData() {
+            return Promise.all(this._customWords.map(word =>
+                this._getIndexEntry('words', word, 4)
+                    .then(entries => entries[word])
+            ));
         }
     }
 
