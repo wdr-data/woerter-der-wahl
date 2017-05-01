@@ -30,29 +30,32 @@ gulp.task('styles', () => gulp.src('styles/{*, !_*}.sass')
     .pipe(gulp.dest(path.join('.tmp', 'styles')))
 );
 
+const templatePipeline = () => $.swig({
+    defaults: { cache: false }
+});
 gulp.task('templates', () => gulp.src('index.html')
-    .pipe($.swig({
-        defaults: { cache: false }
-    }))
+    .pipe(templatePipeline())
     .pipe(gulp.dest('.tmp'))
 );
 
-gulp.task('html', ['styles', 'templates'], () => gulp.src([path.join('.tmp', 'index.html'), 'embed.html'])
-    .pipe($.usemin({
-        path: './',
-        css: [
-            () => $.cssimport({ includePaths: ['styles'] }),
-            () => $.cleanCss(),
-            () => $.rev()
-        ]
-    }))
-    .pipe($.if('*.html', $.htmlmin({
-        collapseWhitespace: true,
-        decodeEntities: true,
-        minifyJS: true,
-        removeComments: true,
-        removeScriptTypeAttributes: true
-    })))
+const useminPipeline = () => $.usemin({
+    path: './',
+    css: [
+        () => $.cssimport({ includePaths: ['styles'] }),
+        () => $.cleanCss(),
+        () => $.rev()
+    ]
+});
+const htmlPipeline = () => $.htmlmin({
+    collapseWhitespace: true,
+    decodeEntities: true,
+    minifyJS: true,
+    removeComments: true,
+    removeScriptTypeAttributes: true
+});
+gulp.task('embed', ['styles'], () => gulp.src('embed.html')
+    .pipe(useminPipeline())
+    .pipe($.if('*.html', htmlPipeline()))
     .pipe(gulp.dest(dist))
 );
 
@@ -141,15 +144,8 @@ gulp.task('data-vis', ['styles', 'data'], () => gulp.src('data.html')
             words: require(`./output/${party}.json`).data.slice(0, 30)
         }))
     })))
-    .pipe($.swig())
-    .pipe($.usemin({
-        path: './',
-        css: [
-            $.cssimport({ includePaths: ['styles'] }),
-            $.cleanCss(),
-            $.rev()
-        ]
-    }))
+    .pipe(templatePipeline())
+    .pipe(useminPipeline())
     .pipe(gulp.dest(dist))
 );
 
