@@ -489,6 +489,7 @@ um
 umso
 unbedingt
 und
+und/oder
 unmöglich
 unmögliche
 unmöglichen
