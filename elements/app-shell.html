@@ -2,7 +2,6 @@
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/polymer/lib/mixins/gesture-event-listeners.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
-<link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="_lib.html">
 <link rel="import" href="info-text.html">
 
@@ -18,8 +17,7 @@
         <link rel="stylesheet" href="styles/app.css">
         <!-- endbuild -->
 
-        <app-location route="{{ route }}"></app-location>
-        <app-route route="{{ route }}" query-params="{{ urlQuery }}" pattern="/"></app-route>
+        <app-location query-params="{{ urlQuery }}"></app-location>
 
         <template is="dom-if" if="[[ _modalOpen ]]">
             <div class="modal" on-tap="closeModal">
