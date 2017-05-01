@@ -56,6 +56,7 @@
                 const id = ev.target.attributes.for.value;
                 const elem = document.getElementById(id);
                 elem.checked = !elem.checked;
+                ev.preventDefault();
             }));
         });
     })();

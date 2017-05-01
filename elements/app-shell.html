@@ -263,6 +263,7 @@
                 const id = ev.target.attributes.for.value;
                 const elem = this.root.getElementById(id);
                 elem.checked = !elem.checked;
+                ev.preventDefault();
             }));
         }
 
