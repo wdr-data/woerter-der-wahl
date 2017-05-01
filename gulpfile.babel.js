@@ -14,10 +14,14 @@ import ftp from 'vinyl-ftp';
 import merge from 'merge-stream';
 import marked from 'marked';
 import buildIndex from './build-index';
+import { PolymerProject, HtmlSplitter } from 'polymer-build';
 const $ = gulpPlugins();
 
 import webpackConfigDev from './webpack.config.dev';
-import webpackConfig from './webpack.config'
+import webpackConfig from './webpack.config';
+
+const polymerConfig = require('./polymer.json');
+const polymerProject = new PolymerProject(polymerConfig);
 
 const webpackBundler = webpack(webpackConfigDev);
 
@@ -102,27 +106,30 @@ gulp.task('images', function() {
         .pipe(gulp.dest(path.join(dist, 'images')));
 });
 
-gulp.task('elements', ['styles'], () => gulp.src('elements/**/*', { base: '.' })
-    .pipe($.usemin({
-        path: './',
-        css: [
-            () => $.cssimport({ includePaths: ['styles'] }),
-            () => $.cleanCss(),
-            () => $.rev()
-        ]
-    }))
-    .pipe($.if('**/info-text.html', $.template({
-        infotext: marked(fs.readFileSync('content/info.md').toString(), { breaks: true })
-    })))
-    .pipe($.if('*.css', $.rename({ dirname: 'styles' })))
-    .pipe(gulp.dest(path.join(dist)))
-);
+const defaultLoadFn = polymerProject.analyzer.loader.load
+    .bind(polymerProject.analyzer.loader);
+const myLoadFn = function(url) {
+    if(url === 'lib.js') {
+        return Promise.resolve('');
+    }
+    return defaultLoadFn(url);
+};
+polymerProject.analyzer.loader.load = myLoadFn.bind(polymerProject.analyzer.loader);
 
-gulp.task('copy:dist', () => gulp.src([
-        'bower_components/**/*.{js,html}'
-    ], { base: './' })
-        .pipe(gulp.dest(dist))
-);
+gulp.task('elements', ['scripts', 'styles'], () => {
+    const splitter = new HtmlSplitter();
+    const sourceStream = polymerProject.sources()
+        .pipe($.if('elements/info-text.html', $.template({
+            infotext: marked(fs.readFileSync('content/info.md').toString(), {breaks: true})
+        })))
+        .pipe($.if('index.html', templatePipeline()))
+        .pipe(splitter.split())
+        .pipe(useminPipeline())
+        .pipe($.if('*.css', $.rename({dirname: 'styles'})))
+        .pipe(splitter.rejoin());
+    return merge(sourceStream, polymerProject.dependencies())
+        .pipe(gulp.dest(dist));
+});
 
 gulp.task('data-analyze', cb => {
     PythonShell.run('wp-vb.py', {
@@ -149,7 +156,7 @@ gulp.task('data-vis', ['styles', 'data'], () => gulp.src('data.html')
     .pipe(gulp.dest(dist))
 );
 
-gulp.task('build', ['data:prod', 'copy:dist', 'scripts', 'html', 'fonts', 'images', 'elements', 'data-vis']);
+gulp.task('build', ['data:prod', 'scripts', 'embed', 'fonts', 'images', 'elements', 'data-vis']);
 
 gulp.task('upload', ['build'], () => {
     const conn = ftp.create({
