@@ -41,7 +41,7 @@
                     </template>
                 </div>
             </div>
-            <h3>Die Top 30 Begriffe</h3>
+            <h3>Die Top [[ _wordCountBubbles ]] Begriffe</h3>
         </div>
 
         <div class="cloud-container">
@@ -52,7 +52,7 @@
             <img src="images/wdr_logo.svg" class="logo">
             <a href="data.html" class="data-link">Tabellen-Darstellung</a>
             <template is="dom-if" if="[[ _customWords.length ]]">
-                <a class="overlay-button shown" on-tap="clearCustomWords">Top30 anzeigen</a>
+                <a class="overlay-button shown" on-tap="clearCustomWords">Top [[ _wordCountBubbles ]] anzeigen</a>
             </template>
         </div>
 
@@ -120,8 +120,6 @@
         afd: "https://afd.nrw/landtagswahl/programm/"
     };
 
-    const wordCountBubbles = 30;
-
     class AppShell extends Polymer.GestureEventListeners(Polymer.Element) {
         static get is() {
             return 'app-shell';
@@ -179,6 +177,10 @@
                 _customWords: {
                     type: Array,
                     value: () => []
+                },
+                _wordCountBubbles: {
+                    type: Number,
+                    value: () => window.innerWidth > 425 ? 30 : 20
                 }
             };
         }
@@ -230,6 +232,14 @@
             ]).then(() =>
                 this.filterData(this.activeParty, this.activeWord)
             );
+
+            window.addEventListener('resize', _.debounce(() => {
+                const former = this._wordCountBubbles;
+                this._wordCountBubbles = window.innerWidth > 425 ? 30 : 20;
+                if(former !== this._wordCountBubbles) {
+                    this.updateCloud(this.activeParty);
+                }
+            }, 500));
         }
 
         prepareData(data) {
@@ -273,7 +283,7 @@
             const baseData = (!word) ?
                 ((party === 'all') ?
                     this._bubbleData
-                        .slice(0, wordCountBubbles)
+                        .slice(0, this._wordCountBubbles)
                         .sort(() => Math.random()*2-1)
                         .slice(0, wordsForAll)
                         .reduce(
@@ -285,7 +295,7 @@
                             )),
                         []) :
                     this._bubbleData
-                        .slice(0, wordCountBubbles)
+                        .slice(0, this._wordCountBubbles)
                         .sort(() => Math.random()*2-1)
                         .slice(0,wordCount)
                         .filter(word => word.occurence.length > 0)
@@ -325,11 +335,11 @@
             this._textHeadline =
                 (party === 'all') ? (
                     (word === null) ?
-                        "Zufällig gewählte Stellen für Top-30-Wörter" :
+                        `Zufällig gewählte Stellen für Top-${this._wordCountBubbles}-Wörter` :
                         `Zufällig gewählte Stellen für „${word.name}“`
                 ) : (
                     (word === null) ?
-                        `Zufällig gewählte Stellen für Top-30-Wörter im ${partyMap[party]}-Wahlprogramm` :
+                        `Zufällig gewählte Stellen für Top-${this._wordCountBubbles}-Wörter im ${partyMap[party]}-Wahlprogramm` :
                         `Zufällig gewählte Stellen für „${word.name}“ im ${partyMap[party]}-Wahlprogramm`
                 );
 
