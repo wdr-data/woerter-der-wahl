@@ -41,6 +41,17 @@
     <app-shell></app-shell>
 </article>
 
+<script>
+    // more button in teaser
+    (function() {
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('.info-modal-link').addEventListener('click', ev => {
+                document.querySelector('app-shell').openModal(ev);
+            });
+        });
+    })();
+</script>
+
 {% include "partials/breadcrumb.html" %}
 {% include "partials/footer.html" %}
 
