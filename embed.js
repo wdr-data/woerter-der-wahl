@@ -1,5 +1,4 @@
 import BubbleCloud from './lib/bubble_cloud';
-import _ from 'lodash';
 import qs from 'qs';
 import * as helpers from './lib/data_helpers';
 
