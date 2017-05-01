@@ -338,8 +338,9 @@
         }
 
         updateCloud(party) {
+            const maxValue = this._customWords.length > 0 ? undefined : this._topData[0].share;
             this._bubbleData = dataHelpers.bubbleData(this.data, party);
-            this.cloud.setData(this.prepareData(this._bubbleData.slice(0,wordCountBubbles)));
+            this.cloud.setData(this.prepareData(this._bubbleData.slice(0,this._wordCountBubbles)), maxValue);
         }
 
         getWordById(id) {
