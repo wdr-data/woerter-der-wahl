@@ -456,9 +456,10 @@
             const box_modal = modal.getBoundingClientRect();
             const box_modal_highlight = text.querySelector('.highlight').getBoundingClientRect();
 
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
             const top = box_highlight.top
                 - (box_modal_highlight.top - box_modal.top)
-                + document.body.scrollTop // make relative to page
+                + scrollTop // make relative to page
                 + 10; // padding
 
             modal.style.top = top + 'px';
