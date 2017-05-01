@@ -17,7 +17,7 @@
         <link rel="stylesheet" href="styles/app.css">
         <!-- endbuild -->
 
-        <app-location query-params="{{ urlQuery }}"></app-location>
+        <app-location query-params="{{ urlQuery }}" url-space-regex="//g"></app-location>
 
         <template is="dom-if" if="[[ _modalOpen ]]">
             <div class="modal" on-tap="closeModal">
