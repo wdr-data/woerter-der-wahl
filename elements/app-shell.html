@@ -239,6 +239,7 @@
                 if(former !== this._wordCountBubbles) {
                     this.updateCloud(this.activeParty);
                 }
+                this.filterData(this.activeParty, this.activeWord);
             }, 500));
         }
 
