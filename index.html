@@ -44,12 +44,19 @@
 </article>
 
 <script>
-    // more button in teaser
     (function() {
         document.addEventListener('DOMContentLoaded', () => {
+            // more button in teaser
             document.querySelector('.info-modal-link').addEventListener('click', ev => {
                 document.querySelector('app-shell').openModal(ev);
             });
+
+            // fix for Safari, where labels do not check checkboxes
+            document.querySelectorAll('label').forEach(elem => elem.addEventListener('touchstart', ev => {
+                const id = ev.target.attributes.for.value;
+                const elem = document.getElementById(id);
+                elem.checked = !elem.checked;
+            }));
         });
     })();
 </script>

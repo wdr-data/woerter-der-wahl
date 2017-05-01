@@ -250,6 +250,13 @@
                 }
                 this.filterData(this.activeParty, this.activeWord);
             }, 500));
+
+            // fix for Safari, where labels do not check checkboxes
+            this.root.querySelectorAll('label').forEach(elem => elem.addEventListener('touchstart', ev => {
+                const id = ev.target.attributes.for.value;
+                const elem = this.root.getElementById(id);
+                elem.checked = !elem.checked;
+            }));
         }
 
         prepareData(data) {
