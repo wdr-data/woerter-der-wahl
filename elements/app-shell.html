@@ -32,7 +32,11 @@
         </template>
 
         <div class="menubar">
-            <a href="#" class="icon-info" on-tap="openModal">Info</a>
+            <a href="#" class="icon-info" on-tap="openModal"><span>Info</span></a>
+
+            <input type="checkbox" id="adderState" class="hidden">
+            <label class="icon-add" for="adderState">+</label>
+
             <div class="word-add-container">
                 <input type="text" placeholder="Begriff hinzufügen" class="word-input" value="{{searchterm::keyup}}">
                 <div class="search-completion">
@@ -41,6 +45,7 @@
                     </template>
                 </div>
             </div>
+
             <h3>Die Top [[ _wordCountBubbles ]] Begriffe</h3>
         </div>
 
@@ -575,6 +580,7 @@
                 .then(words => words[word])
                 .then(word => this.addCustomWord(word));
             this.searchterm = "";
+            this.root.getElementById('adderState').checked = false;
         }
 
         addCustomWord(word) {

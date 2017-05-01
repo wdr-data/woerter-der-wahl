@@ -13,18 +13,27 @@
 $content-margin: 40px
 $menubar-color: #345c7e
 $tab-width: 100px
+$bp-mobile: 600px
 
 .menubar
   background: $menubar-color
   text-transform: uppercase
   color: white
   line-height: 40px
+  position: relative
 
   .icon-info
     float: left
     color: white
     text-decoration: none
     border-right: 2px solid $wdr-blue
+
+    @media (max-width: $bp-mobile)
+      span
+        display: none
+
+      &:before
+        margin-right: 0 !important
 
     &:before
       content: "i"
@@ -41,6 +50,17 @@ $tab-width: 100px
     &:hover
       background: $wdr-blue
 
+  .icon-add
+    float: right
+    border-left: 2px solid $wdr-blue
+    font-size: 35px
+    width: 45px
+    text-align: center
+    display: none
+
+    @media (max-width: $bp-mobile)
+      display: block
+
   h3
     margin: 0
     text-align: center
@@ -52,6 +72,18 @@ $tab-width: 100px
     float: right
     border-left: 2px solid $wdr-blue
 
+    @media (max-width: $bp-mobile)
+      position: absolute
+      top: 100%
+      left: 0
+      right: 0
+      z-index: 200
+      background: $menubar-color
+      border-left: none
+      border-top: 2px solid $wdr-blue
+      border-bottom: 2px solid $wdr-blue
+      display: none
+
     .word-input
       display: block
       height: 40px
@@ -61,6 +93,9 @@ $tab-width: 100px
       outline: none
       background: transparent
       color: inherit
+
+      @media (max-width: $bp-mobile)
+        width: 100%
 
       &::placeholder
         color: darken(white, 20%)
@@ -83,6 +118,9 @@ $tab-width: 100px
 
         &:hover
           background: $wdr-blue
+
+  #adderState:checked ~ .word-add-container
+    display: block
 
   > *
     padding: 0 10px
