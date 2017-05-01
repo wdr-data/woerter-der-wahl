@@ -13,9 +13,11 @@ import imageminJpegoptim from 'imagemin-jpegoptim';
 import ftp from 'vinyl-ftp';
 import merge from 'merge-stream';
 import marked from 'marked';
+import cssSlam from 'css-slam';
 import buildIndex from './build-index';
 import { PolymerProject, HtmlSplitter } from 'polymer-build';
 const $ = gulpPlugins();
+const cssSlamGulp = cssSlam.gulp;
 
 import webpackConfigDev from './webpack.config.dev';
 import webpackConfig from './webpack.config';
@@ -117,17 +119,29 @@ const myLoadFn = function(url) {
 polymerProject.analyzer.loader.load = myLoadFn.bind(polymerProject.analyzer.loader);
 
 gulp.task('elements', ['scripts', 'styles'], () => {
-    const splitter = new HtmlSplitter();
     const sourceStream = polymerProject.sources()
         .pipe($.if('elements/info-text.html', $.template({
             infotext: marked(fs.readFileSync('content/info.md').toString(), {breaks: true})
         })))
         .pipe($.if('index.html', templatePipeline()))
-        .pipe(splitter.split())
-        .pipe(useminPipeline())
-        .pipe($.if('*.css', $.rename({dirname: 'styles'})))
-        .pipe(splitter.rejoin());
+        .pipe($.usemin({
+            path: './',
+            css: [
+                () => $.cssimport({ includePaths: ['styles'] }),
+                () => $.rev()
+            ]
+        }))
+        .pipe($.if('*.css', $.rename({dirname: 'styles'})));
+
+    const splitter = new HtmlSplitter();
     return merge(sourceStream, polymerProject.dependencies())
+        .pipe(splitter.split())
+        .pipe($.if('*.js', $.babili()))
+        .pipe($.if('*.css', cssSlamGulp()))
+        .pipe($.if('*.html', cssSlamGulp()))
+        .pipe($.if('*.html', htmlPipeline()))
+        .pipe(splitter.rejoin())
+        .pipe(polymerProject.bundler())
         .pipe(gulp.dest(dist));
 });
 
