@@ -15,7 +15,7 @@ import merge from 'merge-stream';
 import marked from 'marked';
 import cssSlam from 'css-slam';
 import buildIndex from './build-index';
-import { PolymerProject, HtmlSplitter } from 'polymer-build';
+import { PolymerProject, HtmlSplitter, forkStream } from 'polymer-build';
 const $ = gulpPlugins();
 const cssSlamGulp = cssSlam.gulp;
 
@@ -30,6 +30,7 @@ const webpackBundler = webpack(webpackConfigDev);
 require('dotenv').config({silent: true});
 
 const dist = 'build';
+const distLegacy = path.join(dist, 'legacy');
 
 gulp.task('styles', () => gulp.src('styles/{*, !_*}.sass')
     .pipe($.sass())
@@ -72,6 +73,29 @@ gulp.task('scripts', () => gulp.src(['lib/index.js', 'embed.js'])
     .pipe(webpackStream(webpackConfig, webpack))
     .pipe(gulp.dest(dist))
 );
+
+gulp.task('scripts:legacy', () => {
+    const config = Object.assign({}, webpackConfig, {
+        plugins: [],
+        module: {
+            rules: [
+                {
+                    test: /\.js$/,
+                    exclude: /node_modules/,
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [ [ 'es2015', { modules: false } ] ]
+                    }
+                }
+            ]
+        }
+    });
+
+    return gulp.src(['lib/index.js', 'embed.js'])
+        .pipe(webpackStream(config, webpack))
+        .pipe($.uglify())
+        .pipe(gulp.dest(distLegacy));
+});
 
 gulp.task('serve', ['styles', 'templates', 'fonts:develop'], () => {
     browserSync.init({
@@ -133,16 +157,35 @@ gulp.task('elements', ['scripts', 'styles'], () => {
         }))
         .pipe($.if('*.css', $.rename({dirname: 'styles'})));
 
-    const splitter = new HtmlSplitter();
-    return merge(sourceStream, polymerProject.dependencies())
-        .pipe(splitter.split())
-        .pipe($.if('*.js', $.babili()))
-        .pipe($.if('*.css', cssSlamGulp()))
+    const htmlcssPipeline = () =>
+        $.if('*.css', cssSlamGulp())
         .pipe($.if('*.html', cssSlamGulp()))
-        .pipe($.if('*.html', htmlPipeline()))
-        .pipe(splitter.rejoin())
+        .pipe($.if('*.html', htmlPipeline()));
+
+    const mainstream = merge(sourceStream, polymerProject.dependencies());
+
+    // ES6 (default) stream
+    const splitterDefault = new HtmlSplitter();
+    const defaultStream = forkStream(mainstream)
+        .pipe(splitterDefault.split())
+        .pipe($.if('*.js', $.babili()))
+        .pipe(htmlcssPipeline())
+        .pipe(splitterDefault.rejoin())
         .pipe(polymerProject.bundler())
         .pipe(gulp.dest(dist));
+
+    // ES5 (legacy) stream
+    const splitterLegacy = new HtmlSplitter();
+    const legacyStream = forkStream(mainstream)
+        .pipe(splitterLegacy.split())
+        .pipe($.if('*.js', $.babel({ presets: ['es2015'] })))
+        .pipe($.if('*.js', $.uglify()))
+        .pipe(htmlcssPipeline())
+        .pipe(splitterLegacy.rejoin())
+        .pipe(polymerProject.bundler())
+        .pipe(gulp.dest(distLegacy));
+
+    return merge(defaultStream, legacyStream);
 });
 
 gulp.task('data-analyze', cb => {
