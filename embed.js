@@ -35,6 +35,12 @@ import 'whatwg-fetch';
             });
         });
 
+    document.querySelector('.app-link').addEventListener('click', ev => {
+        ev.preventDefault();
+        const link = 'index.html' + (params.party ? `?party=${params.party}` : '');
+        window.open(link, '_blank');
+    });
+
     window.addEventListener('resize', debounce(() => {
         if(!cloud) {
             return;
