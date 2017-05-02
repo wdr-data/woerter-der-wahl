@@ -7,9 +7,18 @@ module.exports = {
         'lib':   './lib',
         'embed': './embed.js'
     },
-    plugins: [
-        new BabiliPlugin()
-    ],
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: 'babel-loader',
+                options: {
+                    presets: [ [ 'es2015', { modules: false } ] ]
+                }
+            }
+        ]
+    },
     output: {
         path: __dirname,
         publicPath: '/',

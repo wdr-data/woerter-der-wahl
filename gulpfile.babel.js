@@ -70,6 +70,7 @@ gulp.task('fonts:develop', () => dlFonts('fonts'));
 
 gulp.task('scripts', () => gulp.src(['lib/index.js', 'embed.js'])
     .pipe(webpackStream(webpackConfig, webpack))
+    .pipe($.uglify())
     .pipe(gulp.dest(dist))
 );
 
@@ -127,19 +128,25 @@ gulp.task('elements', ['scripts', 'styles'], () => {
         .pipe($.usemin({
             path: './',
             css: [
-                () => $.cssimport({ includePaths: ['styles'] }),
-                () => $.rev()
+                () => $.cssimport({ includePaths: ['styles'] })
             ]
         }))
         .pipe($.if('*.css', $.rename({dirname: 'styles'})));
 
+    const htmlcssPipeline = () =>
+        $.if('*.css', cssSlamGulp())
+        .pipe($.if('*.html', cssSlamGulp()))
+        .pipe($.if('*.html', htmlPipeline()));
+
     const splitter = new HtmlSplitter();
     return merge(sourceStream, polymerProject.dependencies())
         .pipe(splitter.split())
-        .pipe($.if('*.js', $.babili()))
-        .pipe($.if('*.css', cssSlamGulp()))
-        .pipe($.if('*.html', cssSlamGulp()))
-        .pipe($.if('*.html', htmlPipeline()))
+        .pipe($.if(
+            file => file.path.endsWith('.js') && !file.path.endsWith('custom-elements-es5-adapter.js'),
+            $.babel({ presets: ['es2015'] })
+        ))
+        .pipe($.if('*.js', $.uglify()))
+        .pipe(htmlcssPipeline())
         .pipe(splitter.rejoin())
         .pipe(polymerProject.bundler())
         .pipe(gulp.dest(dist));
