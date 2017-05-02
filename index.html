@@ -74,13 +74,21 @@
                 document.querySelector('app-shell').openModal(ev);
             });
 
-            // fix for Safari, where labels do not check checkboxes
-            document.querySelectorAll('label').forEach(elem => elem.addEventListener('touchstart', ev => {
-                const id = ev.target.attributes.for.value;
-                const elem = document.getElementById(id);
-                elem.checked = !elem.checked;
-                ev.preventDefault();
-            }));
+            // Fallback for style inclusion on IE/Edge
+            if(navigator.userAgent.indexOf('Trident') !== -1 || navigator.userAgent.indexOf('Edge') !== -1) {
+                const style = document.createElement('link');
+                style.rel = 'stylesheet';
+                style.href = 'styles/app.css';
+                document.head.appendChild(style);
+            } else {
+                // fix for Safari, where labels do not check checkboxes
+                document.querySelectorAll('label').forEach(elem => elem.addEventListener('touchstart', ev => {
+                    const id = ev.target.attributes.for.value;
+                    const elem = document.getElementById(id);
+                    elem.checked = !elem.checked;
+                    ev.preventDefault();
+                }));
+            }
         });
     })();
 </script>
