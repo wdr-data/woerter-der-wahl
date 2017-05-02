@@ -3,6 +3,13 @@ import qs from 'qs';
 import * as helpers from './lib/data_helpers';
 import debounce from 'lodash/debounce';
 
+// Polyfills
+import Promise from 'promise';
+if (!window.Promise) {
+    window.Promise = Promise;
+}
+import 'whatwg-fetch';
+
 (function() {
     const params = qs.parse(window.location.search.substr(1));
 
