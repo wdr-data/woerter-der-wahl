@@ -29,6 +29,10 @@ import 'whatwg-fetch';
             elem.classList.add('party-'+(params.party || 'all'));
             cloud = BubbleCloud(elem);
             cloud.setData(currentData);
+            elem.addEventListener('word-click', ev => {
+                const link = `index.html?word=${ev.detail.name}` + (params.party ? `&party=${params.party}` : '');
+                window.open(link, '_blank');
+            });
         });
 
     window.addEventListener('resize', debounce(() => {
