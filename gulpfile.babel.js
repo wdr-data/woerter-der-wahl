@@ -138,14 +138,13 @@ gulp.task('elements', ['scripts', 'styles'], () => {
         .pipe($.if('*.html', cssSlamGulp()))
         .pipe($.if('*.html', htmlPipeline()));
 
+    const jsConditional = file => file.path.endsWith('.js') && !file.path.endsWith('custom-elements-es5-adapter.js');
+
     const splitter = new HtmlSplitter();
     return merge(sourceStream, polymerProject.dependencies())
         .pipe(splitter.split())
-        .pipe($.if(
-            file => file.path.endsWith('.js') && !file.path.endsWith('custom-elements-es5-adapter.js'),
-            $.babel({ presets: ['es2015'] })
-        ))
-        .pipe($.if('*.js', $.uglify()))
+        .pipe($.if(jsConditional, $.babel({ presets: ['es2015'] })))
+        .pipe($.if(jsConditional, $.uglify()))
         .pipe(htmlcssPipeline())
         .pipe(splitter.rejoin())
         .pipe(polymerProject.bundler())
