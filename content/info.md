@@ -14,7 +14,7 @@ Redaktion: Torsten Fischer, Rainer Kellers, Maike Krefting
 
 [**Impressum**](http://www1.wdr.de/impressum/index.html)
 
-# Vorgehensweise
+## Vorgehensweise
 
 Berücksichtigt wurden Parteien, die derzeit im NRW-Landtag sitzen (SPD, Grüne, CDU, FDP, Piraten) sowie jene Parteien, die laut NRW-Trend in den neuen Landtag einziehen könnten: Linke und AfD.
 
@@ -33,7 +33,7 @@ Bei den Parteien-Blasen werden die relativen Anteile des gewählten Wortes an al
 Den Code zu 'Wörter der Wahl' stellen wir OpenSource zur Verfügung (MIT License):
 [**github.com/wdr-data**](https://github.com/wdr-data/woerter-der-wahl)
 
-# Quellen:
+## Quellen
 [SPD Wahlprogramm - html](https://www.nrwspd.de/der-nrw-plan/)
 
 [CDU Wahlprogramm - pdf](https://www.cdu-nrw.de/sites/default/files/media/docs/2017-04-01_regierungsprogramm_cdu_fuer_nrw_2017-2022.pdf)
@@ -48,12 +48,35 @@ Den Code zu 'Wörter der Wahl' stellen wir OpenSource zur Verfügung (MIT Licens
 
 [AFD Wahlprogramm - pdf aus dieser Seite](https://afd.nrw/landtagswahl/programm/)
 
-### Credits:
+### Credits
 Wörter der Wahl wandelt eine Vorlage der New York Times ab:
 http://www.nytimes.com/interactive/2012/09/04/us/politics/democratic-convention-words.html?_r=0
+
+Bubble Graph Vorlage: https://github.com/vlandham/bubble_chart_v4
 
 Ein Dank an Mike Bostock: https://d3js.org/
 
 Stopwords: https://github.com/solariz/german_stopwords/blob/master/german_stopwords_plain.txt
 
 Stemming: http://snowball.tartarus.org/algorithms/german/stemmer.html
+
+### Rechtliches & Lizenzen
+
+#### Lizenz
+
+Javascript, HTML & CSS (Source-Code oder aufbereitet) sind bei Beibehaltung des Lizenztextes unter der MIT License frei nutzbar und weiterverbreitbar.
+
+[Lizenztext](https://github.com/wdr-data/woerter-der-wahl/blob/master/LICENSE.md)
+
+Das Urheberrecht der verwendeten Wahlprogramme liegt bei den Parteien. Für die Wahlprogramme wird **kein Nutzungsrecht** eingeräumt. 
+Für Grafiken wird kein Nutzungsrecht eingeräumt.
+
+Da eine vergleichbare Anwendung zur Bundestagswahl geplant ist, behalten wir uns vor, diesen Anwendungsfall (Wahlprogramme zur Bundestagswahl) auszunehmen.
+
+#### Urheberrecht
+
+Copyright Westdeutscher Rundfunk Köln
+
+#### Gewährleistungsausschluss
+
+Es besteht keinerlei Gewährleistung für das Programm, soweit dies gesetzlich zulässig ist. Sofern nicht anderweitig schriftlich bestätigt, stellen die Urheberrechtsinhaber und/oder Dritte das Programm so zur Verfügung, „wie es ist“, ohne irgendeine Gewährleistung. Das volle Risiko bezüglich Qualität und Leistungsfähigkeit des Programms liegt bei Ihnen.
