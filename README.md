@@ -4,17 +4,40 @@
 Zur NRW-Landtagswahl am 14. Mai haben wir gezählt, welche Wörter wie oft in den Wahlprogrammen vorkommen. Zu sehen sind die Top 30 Begriffe. Sie können eigene Wortfelder erstellen, indem Sie Wörter im Suchfeld eingeben.
 
 Ein Klick auf ein Wort zeigt, wie oft das Wort in den Wahlprogrammen vorkommt und darunter eine Zufallsauswahl von Sätzen, in denen das Wort enthalten ist.
-Wörter wie 'der, die, das, und, oder, aber' etc. wurden anhand [dieser Liste](https://github.com/solariz/german_stopwords/blob/master/german_stopwords_plain.txt) aussortiert.
+Wörter wie 'der, die, das, und, oder, aber' etc. wurden anhand [dieser Liste](stopwords.txt) aussortiert.
 Berücksichtigt sind Parteien, die derzeit in Fraktionsstärke im NRW-Landtag sitzen (SPD, Grüne, CDU, FDP, Piraten) sowie Linke und AFD, die laut NRW-Trend gute Chancen haben, über die Fünf-Prozent-Hürde zu kommen. [mehr Info](http://www1.wdr.de/nachrichten/landespolitik/landtagswahl/wdr-wahlberichterstattung-100.html)
 
-### Info
-Von Patricia Ennenbach und Marcus Weiner
-Design: Mirko Schweikert
-Redaktion: Torsten Fischer, Rainer Kellers, Maike Krefting
+### Team
+
+- Von: Patricia Ennenbach und Marcus Weiner
+- Design: Mirko Schweikert
+- Redaktion: Torsten Fischer, Rainer Kellers, Maike Krefting
 
 [**Impressum**](http://www1.wdr.de/impressum/index.html)
 
-# Vorgehensweise
+## Nutzung
+
+#### Abhängigkeiten
+
+- NodeJS
+- Bower: `npm install -g bower`
+- Gulp: `npm install -g gulp`
+- Build-Tools: `npm install` (im Projektverzeichnis)
+- Frontend-Libs: `bower install` (im Projektverzeichnis)
+
+#### Development server
+
+```bash
+gulp serve
+```
+
+#### Live-Build unter build/
+
+```bash
+gulp build
+```
+
+## Vorgehensweise (Datenanalyse)
 
 Berücksichtigt wurden Parteien, die derzeit im NRW-Landtag sitzen (SPD, Grüne, CDU, FDP, Piraten) sowie jene Parteien, die laut NRW-Trend in den neuen Landtag einziehen könnten: Linke und AfD.
 
@@ -30,10 +53,7 @@ Die Größe der Wort-Blasen gibt den Anteil des Wortes wieder, den es an allen W
 
 Bei den Parteien-Blasen werden die relativen Anteile des gewählten Wortes an allen Worten des Wahlprogrammes (ohne Stopwords) wiedergegeben. So wird gewährleistet, dass Wörter in kurzen und langen Wahlprogrammen gleich gewichtet werden.
 
-Den Code zu 'Wörter der Wahl' stellen wir OpenSource zur Verfügung (MIT License):
-[**github.com/wdr-data**](https://github.com/wdr-data/woerter-der-wahl)
-
-# Quellen:
+### Quellen:
 [SPD Wahlprogramm - html](https://www.nrwspd.de/der-nrw-plan/)
 
 [CDU Wahlprogramm - pdf](https://www.cdu-nrw.de/sites/default/files/media/docs/2017-04-01_regierungsprogramm_cdu_fuer_nrw_2017-2022.pdf)
@@ -50,9 +70,11 @@ Den Code zu 'Wörter der Wahl' stellen wir OpenSource zur Verfügung (MIT Licens
 Wörter der Wahl wandelt eine Vorlage der New York Times ab:
 http://www.nytimes.com/interactive/2012/09/04/us/politics/democratic-convention-words.html?_r=0
 
+Bubble Graph Vorlage: https://github.com/vlandham/bubble_chart_v4
+
 Ein Dank an Mike Bostock: https://d3js.org/
 
-Stopwords: https://github.com/solariz/german_stopwords/blob/master/german_stopwords_plain.txt
+Stopwords: [stopwords.txt](stopwords.txt)
 
 Stemming: http://snowball.tartarus.org/algorithms/german/stemmer.html
 
@@ -61,32 +83,18 @@ Stemming: http://snowball.tartarus.org/algorithms/german/stemmer.html
 
 #### Lizenz
 
-Javascript, HTML & CSS sind unter der MIT License frei nutzbar und weiterverbreitbar. Für Grafiken wird kein Nutzungsrecht eingeräumt.
+Javascript, HTML & CSS (Source-Code oder aufbereitet) sind bei Beibehaltung des Lizenztextes unter der MIT License frei nutzbar und weiterverbreitbar.
 
-## Urheberrecht
+[Lizenztext](LICENSE.md)
+
+Das Urheberrecht der verwendeten Wahlprogramme liegt bei den Parteien. Für die Wahlprogramme wird **kein Nutzungsrecht** eingeräumt. 
+Für Grafiken wird kein Nutzungsrecht eingeräumt.
+
+Da eine vergleichbare Anwendung zur Bundestagswahl geplant ist, behalten wir uns vor, diesen Anwendungsfall (Wahlprogramme zur Bundestagswahl) auszunehmen.
+#### Urheberrecht
 
 Copyright Westdeutscher Rundfunk Köln
 
-## Eingesetzte Technologie
-
-JavaScript (VanillaJS & ES6)
-D3.js
-Nutzung
-
-#### Abhängigkeiten
-
-NodeJS
-Bower npm install -g bower
-Gulp npm install -g gulp
-Build-Tools npm install (im Projektverzeichnis)
-Frontend-Libs bower install (im Projektverzeichnis)
-
-#### Development server
-gulp serve
-
-#### Live-Build unter dist/
-gulp build
-
-#### Gewährleistungsausschluss
+### Gewährleistungsausschluss
 
 Es besteht keinerlei Gewährleistung für das Programm, soweit dies gesetzlich zulässig ist. Sofern nicht anderweitig schriftlich bestätigt, stellen die Urheberrechtsinhaber und/oder Dritte das Programm so zur Verfügung, „wie es ist“, ohne irgendeine Gewährleistung. Das volle Risiko bezüglich Qualität und Leistungsfähigkeit des Programms liegt bei Ihnen.
