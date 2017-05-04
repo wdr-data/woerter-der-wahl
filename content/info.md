@@ -7,7 +7,7 @@ Ein Klick auf ein Wort zeigt, wie oft das Wort in den Wahlprogrammen vorkommt un
 Wörter wie 'der, die, das, und, oder, aber' etc. wurden anhand [dieser Liste](https://github.com/solariz/german_stopwords/blob/master/german_stopwords_plain.txt) aussortiert.
 Berücksichtigt sind Parteien, die derzeit in Fraktionsstärke im NRW-Landtag sitzen (SPD, Grüne, CDU, FDP, Piraten) sowie Linke und AFD, die laut NRW-Trend gute Chancen haben, über die Fünf-Prozent-Hürde zu kommen. [mehr Info](http://www1.wdr.de/nachrichten/landespolitik/landtagswahl/wdr-wahlberichterstattung-100.html)
 
-### Info
+### Team
 Von Patricia Ennenbach und Marcus Weiner
 Design: Mirko Schweikert
 Redaktion: Torsten Fischer, Rainer Kellers, Maike Krefting
