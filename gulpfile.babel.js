@@ -69,13 +69,17 @@ gulp.task('embed', ['styles'], () => gulp.src('embed.html')
 gulp.task('fonts', () => dlFonts(path.join(dist, 'fonts')));
 gulp.task('fonts:develop', () => dlFonts('fonts'));
 
-gulp.task('scripts', () => gulp.src(['lib/index.js', 'embed.js'])
+gulp.task('scripts:default', () => gulp.src(['lib/index.js'])
     .pipe(webpackStream(webpackConfig, webpack))
     .pipe(gulp.dest(dist))
 );
 
 gulp.task('scripts:legacy', () => {
     const config = Object.assign({}, webpackConfig, {
+        entry: {
+            'lib':   './lib',
+            'embed': './embed.js'
+        },
         plugins: [],
         module: {
             rules: [
@@ -94,8 +98,11 @@ gulp.task('scripts:legacy', () => {
     return gulp.src(['lib/index.js', 'embed.js'])
         .pipe(webpackStream(config, webpack))
         .pipe($.uglify())
-        .pipe(gulp.dest(distLegacy));
+        .pipe($.if('lib.js', gulp.dest(distLegacy)))
+        .pipe($.if('embed.js', gulp.dest(dist)));
 });
+
+gulp.task('scripts', ['scripts:default', 'scripts:legacy']);
 
 gulp.task('serve', ['styles', 'templates', 'fonts:develop'], () => {
     browserSync.init({

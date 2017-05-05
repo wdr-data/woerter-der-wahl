@@ -4,8 +4,7 @@ const BabiliPlugin = require("babili-webpack-plugin");
 module.exports = {
     context: __dirname,
     entry: {
-        'lib':   './lib',
-        'embed': './embed.js'
+        'lib':   './lib'
     },
     module: {
         rules: [
