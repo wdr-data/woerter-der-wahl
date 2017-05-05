@@ -175,6 +175,8 @@ gulp.task('elements', ['styles'], () => {
     const defaultStream = forkStream(mainstream)
         .pipe(splitterDefault.split())
         .pipe($.if('*.js', $.babili()))
+        .pipe($.if('index.html_*.js', $.babel({ presets: ['es2015'] })))
+        .pipe($.if('index.html_*.js', $.uglify()))
         .pipe(htmlcssPipeline())
         .pipe(splitterDefault.rejoin())
         .pipe(polymerProject.bundler())
