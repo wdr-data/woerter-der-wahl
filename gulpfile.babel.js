@@ -142,7 +142,7 @@ const myLoadFn = function(url) {
 };
 polymerProject.analyzer.loader.load = myLoadFn.bind(polymerProject.analyzer.loader);
 
-gulp.task('elements', ['scripts', 'styles'], () => {
+gulp.task('elements', ['styles'], () => {
     const sourceStream = polymerProject.sources()
         .pipe($.if('elements/info-text.html', $.template({
             infotext: marked(fs.readFileSync('content/info.md').toString(), {breaks: true})
@@ -151,8 +151,7 @@ gulp.task('elements', ['scripts', 'styles'], () => {
         .pipe($.usemin({
             path: './',
             css: [
-                () => $.cssimport({ includePaths: ['styles'] }),
-                () => $.rev()
+                () => $.cssimport({ includePaths: ['styles'] })
             ]
         }))
         .pipe($.if('*.css', $.rename({dirname: 'styles'})));

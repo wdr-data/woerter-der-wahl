@@ -3,6 +3,13 @@ import qs from 'qs';
 import * as helpers from './lib/data_helpers';
 import debounce from 'lodash/debounce';
 
+// Polyfills
+import Promise from 'promise';
+if (!window.Promise) {
+    window.Promise = Promise;
+}
+import 'whatwg-fetch';
+
 (function() {
     const params = qs.parse(window.location.search.substr(1));
 
@@ -22,7 +29,17 @@ import debounce from 'lodash/debounce';
             elem.classList.add('party-'+(params.party || 'all'));
             cloud = BubbleCloud(elem);
             cloud.setData(currentData);
+            elem.addEventListener('word-click', ev => {
+                const link = `index.html?word=${ev.detail.name}` + (params.party ? `&party=${params.party}` : '');
+                window.open(link, '_blank');
+            });
         });
+
+    document.querySelector('.app-link').addEventListener('click', ev => {
+        ev.preventDefault();
+        const link = 'index.html' + (params.party ? `?party=${params.party}` : '');
+        window.open(link, '_blank');
+    });
 
     window.addEventListener('resize', debounce(() => {
         if(!cloud) {

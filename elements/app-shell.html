@@ -35,16 +35,16 @@
             <a href="#" class="icon-info" on-tap="openModal"><span>Info</span></a>
 
             <input type="checkbox" id="adderState" class="hidden">
-            <label class="icon-add" for="adderState">+</label>
 
             <div class="word-add-container">
-                <input type="text" placeholder="Begriff hinzufügen" class="word-input" value="{{searchterm::keyup}}">
+                <input type="text" placeholder="Wort suchen" class="word-input" value="{{searchterm::keyup}}">
                 <div class="search-completion">
                     <template is="dom-repeat" items="[[ _searchCompletion ]]">
                         <span class="word" on-tap="completionTapped">[[ item ]]</span>
                     </template>
                 </div>
             </div>
+            <label class="icon-add" for="adderState">+</label>
 
             <h3>Die Top [[ _wordCountBubbles ]] Begriffe</h3>
         </div>
