@@ -221,7 +221,9 @@ gulp.task('data-vis', ['styles', 'data'], () => gulp.src('data.html')
     .pipe(gulp.dest(dist))
 );
 
-gulp.task('build', ['data:prod', 'scripts', 'embed', 'fonts', 'images', 'elements', 'data-vis']);
+gulp.task('build:no-data', ['scripts', 'embed', 'fonts', 'images', 'elements']);
+
+gulp.task('build', ['build:no-data', 'data:prod', 'data-vis']);
 
 gulp.task('upload', ['build'], () => {
     const conn = ftp.create({
