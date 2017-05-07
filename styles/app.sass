@@ -57,6 +57,16 @@ $bp-mobile: 600px
     font-size: 35px
     width: 45px
     text-align: center
+    display: none
+
+    &.search-activator
+      display: inline-block
+
+    @media (max-width: $bp-mobile)
+      display: inline-block
+
+      &.search-activator
+        display: none
 
   h3
     margin: 0
