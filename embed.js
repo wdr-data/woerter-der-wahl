@@ -18,15 +18,17 @@ import 'whatwg-fetch';
     let cloud = null;
     let data = [];
 
+    const party = params.party || 'all';
+
     fetch('output/top30.json')
         .then(res => res.json())
         .then(json => {
             const bubbles = json.data;
-            data = helpers.bubbleData(bubbles, params.party || 'all')
+            data = helpers.bubbleData(bubbles, party)
                 .map(helpers.prepareData);
             const currentData = data.slice(0, wordCount);
             const elem = document.getElementById('bubbleCloudVis');
-            elem.classList.add('party-'+(params.party || 'all'));
+            elem.classList.add(`party-${party}`);
             cloud = BubbleCloud(elem);
             cloud.setData(currentData);
             elem.addEventListener('word-click', ev => {
