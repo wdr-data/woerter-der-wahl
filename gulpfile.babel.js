@@ -158,7 +158,8 @@ gulp.task('elements', ['styles'], () => {
         .pipe($.usemin({
             path: './',
             css: [
-                () => $.cssimport({ includePaths: ['styles'] })
+                () => $.cssimport({ includePaths: ['styles'] }),
+                () => $.rev()
             ]
         }))
         .pipe($.if('*.css', $.rename({dirname: 'styles'})));
