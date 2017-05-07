@@ -37,6 +37,17 @@
             <input type="checkbox" id="adderState" class="hidden">
             <label class="icon-add" for="adderState">+</label>
 
+            <a href="#" on-tap="embedLink" class="embed-button">
+                <svg class="icon-embed" viewBox="0 0 40 32">
+                    <path d="M26 23l3 3 10-10-10-10-3 3 7 7z"></path>
+                    <path d="M14 9l-3-3-10 10 10 10 3-3-7-7z"></path>
+                    <path d="M21.916 4.704l2.171 0.592-6 22.001-2.171-0.592 6-22.001z"></path>
+                </svg>
+                <div class="tooltip">
+                    Embedden Sie diese Grafik!
+                </div>
+            </a>
+
             <div class="word-add-container">
                 <input id="word-search" type="text" placeholder="Wort suchen" class="word-input" value="{{searchterm::keyup}}">
                 <div class="search-completion">
@@ -633,6 +644,20 @@
             this._customWords = [];
             this.updateCloud(this.activeParty);
             this.filterData(this.activeParty, this.activeWord);
+        }
+
+        embedLink(ev) {
+            ev.preventDefault();
+            const params = {
+                party: this.activeParty === 'all' ? '' : this.activeParty,
+                customwords: this._customWords.join('+')
+            };
+            const link = "embed.html?" +
+                Object.keys(params)
+                    .filter(k => params[k].length > 0)
+                    .map(k => `${k}=${encodeURIComponent(params[k])}`)
+                    .join('&');
+            window.open(link, '_blank');
         }
     }
 

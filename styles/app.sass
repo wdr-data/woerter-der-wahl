@@ -129,6 +129,53 @@ $bp-mobile: 600px
   #adderState:checked ~ .word-add-container
     display: block
 
+  .embed-button
+    float: right
+    border-left: 2px solid $wdr-blue
+
+    &:hover
+      background: $wdr-blue
+
+      .tooltip
+        display: block
+
+    @media (max-width: $bp-mobile)
+      display: none
+
+    .icon-embed
+      display: inline-block
+      width: 30px
+      line-height: inherit
+      stroke-width: 0
+      fill: white
+      vertical-align: middle
+
+    .tooltip
+      position: absolute
+      right: 10px
+      bottom: -50px
+      background: rgba(0,0,0,0.8)
+      color: white
+      z-index: 200
+      padding: 10px
+      text-transform: none
+      line-height: 1
+      display: none
+
+      &:after
+        bottom: 100%
+        right: 0
+        border: solid transparent
+        content: " "
+        height: 0
+        width: 0
+        position: absolute
+        pointer-events: none
+        border-color: rgba(0,0,0,0)
+        border-bottom-color: rgba(0,0,0,0.8)
+        border-width: 10px
+        margin-right: 5px
+
   > *
     padding: 0 10px
 
