@@ -248,10 +248,9 @@
                 this.filterData(this.activeParty, this.activeWord)
             );
 
-            this._height = window.innerHeight;
             this._width = window.innerWidth;
             window.addEventListener('resize', _.debounce(() => {
-                if(Math.abs(this._height - window.innerHeight) < 70 && this._width === window.innerWidth) {
+                if(this._width === window.innerWidth) {
                     return;
                 }
                 const former = this._wordCountBubbles;
@@ -260,7 +259,6 @@
                     this.updateCloud(this.activeParty);
                 }
                 this.filterData(this.activeParty, this.activeWord);
-                this._height = window.innerHeight;
                 this._width = window.innerWidth;
             }, 500));
 
