@@ -46,7 +46,12 @@
             </div>
             <label class="icon-add" for="adderState">+</label>
 
-            <h3>Die Top [[ _wordCountBubbles ]] Begriffe</h3>
+            <template is="dom-if" if="[[!_customWords.length]]">
+                <h3>Die Top [[ _wordCountBubbles ]] Begriffe</h3>
+            </template>
+            <template is="dom-if" if="[[_customWords.length]]">
+                <h3>Deine Begriffe</h3>
+            </template>
         </div>
 
         <div class="cloud-container">
