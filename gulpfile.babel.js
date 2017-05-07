@@ -35,6 +35,9 @@ const distLegacy = path.join(dist, 'legacy');
 gulp.task('styles', () => gulp.src('styles/{*, !_*}.sass')
     .pipe($.sass())
     .pipe(gulp.dest(path.join('.tmp', 'styles')))
+    .pipe($.cssimport({ includePaths: ['styles'] }))
+    .pipe($.cleanCss())
+    .pipe($.if('app.css', gulp.dest(path.join(dist, 'styles'))))
 );
 
 const templatePipeline = () => $.swig({

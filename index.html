@@ -81,7 +81,7 @@
             if(navigator.userAgent.indexOf('Trident') !== -1 || navigator.userAgent.indexOf('Edge') !== -1) {
                 const style = document.createElement('link');
                 style.rel = 'stylesheet';
-                style.href = 'styles/app.css';
+                style.href = 'styles/app.css?v=' + Math.round(Math.random()*10000);
                 document.head.appendChild(style);
             } else {
                 // fix for Safari, where labels do not check checkboxes
