@@ -13,34 +13,48 @@ import 'whatwg-fetch';
 (function() {
     const params = qs.parse(window.location.search.substr(1));
 
-    const wordCountGetter = () => window.innerWidth > 425 ? 30 : 20;
+    const party = params.party || 'all';
+    const customWords = (params.customwords || '').split('+');
+
+    const wordCountGetter = () => customWords.length === 0 ? (window.innerWidth > 425 ? 30 : 20) : customWords.length;
+
+    const prepareLink = function(word, party, customwords) {
+        const query = qs.stringify({
+            word: word,
+            party: party,
+            customwords: customwords.join('+')
+        });
+        return `index.html?${query}`;
+    };
+
     let wordCount = wordCountGetter();
     let cloud = null;
     let data = [];
 
-    const party = params.party || 'all';
-
-    fetch('output/top30.json')
-        .then(res => res.json())
-        .then(json => {
-            const bubbles = json.data;
-            data = helpers.bubbleData(bubbles, party)
+    (customWords.length === 0 ?
+        fetch('output/top30.json')
+            .then(res => res.json())
+            .then(json => json.data) :
+        helpers.customWordData(customWords)
+    )
+        .then(words => {
+            data = helpers.bubbleData(words, party)
                 .map(helpers.prepareData);
-            const currentData = data.slice(0, wordCount);
+
             const elem = document.getElementById('bubbleCloudVis');
             elem.classList.add(`party-${party}`);
+
             cloud = BubbleCloud(elem);
-            cloud.setData(currentData);
+            cloud.setData(data.slice(0, wordCount));
+
             elem.addEventListener('word-click', ev => {
-                const link = `index.html?word=${ev.detail.name}` + (params.party ? `&party=${params.party}` : '');
-                window.open(link, '_blank');
+                window.open(prepareLink(ev.detail.name, params.party, customWords), '_blank');
             });
         });
 
     document.querySelector('.app-link').addEventListener('click', ev => {
         ev.preventDefault();
-        const link = 'index.html' + (params.party ? `?party=${params.party}` : '');
-        window.open(link, '_blank');
+        window.open(prepareLink(null, params.party, customWords), '_blank');
     });
 
     window.addEventListener('resize', debounce(() => {
