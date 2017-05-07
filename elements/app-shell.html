@@ -632,7 +632,7 @@
                 return;
             }
 
-            const serialized = change.base.length > 0 ? change.base.join('+') : null;
+            const serialized = change.base.length > 0 ? change.base.join(' ') : null;
             if(this.urlQuery.customwords === serialized) {
                 return;
             }
