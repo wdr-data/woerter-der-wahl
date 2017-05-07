@@ -549,7 +549,7 @@
             }
 
             if('customwords' in params && !!params.customwords) {
-                this._customWords = params.customwords.split('+');
+                this._customWords = params.customwords.replace(/\+/g, ' ').split(' ');
             }
         }
 
