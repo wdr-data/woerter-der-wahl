@@ -216,7 +216,6 @@
             this.texts = {};
             this._filteredParty = '';
             this._filteredWord = null;
-            this._cache = { index: {}, words: {} };
         }
 
         connectedCallback() {
@@ -229,7 +228,9 @@
                     .then(res => res.json())
                     .then(json => {
                         this._topData = json.data;
-                        return this._customWords.length > 0 ? this.customWordData() : this._topData;
+                        return this._customWords.length > 0 ?
+                            dataHelpers.customWordData(this._customWords) :
+                            this._topData;
                     })
                     .then(data => {
                         this.data = data;
@@ -575,7 +576,7 @@
                 return;
             }
 
-            this._getIndexEntry('index', term, 2)
+            dataHelpers.getIndexEntry('index', term, 2)
                 .then(words => {
                     this._searchCompletion = words
                         .filter(word => word.toLowerCase().startsWith(term.toLowerCase()))
@@ -583,24 +584,9 @@
                 });
         }
 
-        _getIndexEntry(type, term, len) {
-            const letter = term.toLowerCase().replace(/[^a-z]/g, '-').substr(0,len);
-            if(!(letter in this._cache[type])) {
-                return fetch(`output/${type}/${letter}.json`)
-                    .then(res => res.ok ? res : Promise.reject("not found"))
-                    .then(file => file.json())
-                    .then(json => {
-                        this._cache[type][letter] = json;
-                        return json;
-                    });
-            } else {
-                return Promise.resolve(this._cache[type][letter]);
-            }
-        }
-
         completionTapped(ev) {
             const word = ev.model.item;
-            this._getIndexEntry('words', word, 4)
+            dataHelpers.getIndexEntry('words', word, 4)
                 .then(words => words[word])
                 .then(word => this.addCustomWord(word));
             this.searchterm = "";
@@ -640,13 +626,6 @@
                 return;
             }
             this.set('urlQuery.customwords', serialized);
-        }
-
-        customWordData() {
-            return Promise.all(this._customWords.map(word =>
-                this._getIndexEntry('words', word, 4)
-                    .then(entries => Object.assign(entries[word], { id: entries[word].idx }))
-            ));
         }
 
         clearCustomWords() {
