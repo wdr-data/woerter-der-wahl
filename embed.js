@@ -2,6 +2,7 @@ import BubbleCloud from './lib/bubble_cloud';
 import qs from 'qs';
 import * as helpers from './lib/data_helpers';
 import debounce from 'lodash/debounce';
+import findIndex from 'lodash/findIndex';
 
 // Polyfills
 import Promise from 'promise';
@@ -11,6 +12,16 @@ if (!window.Promise) {
 import 'whatwg-fetch';
 
 (function() {
+    const partyMap = {
+        cdu: "CDU",
+        spd: "SPD",
+        gruene: "Grüne",
+        fdp: "FDP",
+        linke: "Linke",
+        piraten: "Piraten",
+        afd: "AfD"
+    };
+
     const params = qs.parse(window.location.search.substr(1));
 
     const party = params.party || 'all';
@@ -18,6 +29,7 @@ import 'whatwg-fetch';
       .replace(/\+/g, ' ')
       .split(' ')
       .filter(w => w !== "");
+    const selectedWord = params.word || '';
 
     const wordCountGetter = () => customWords.length === 0 ? (window.innerWidth > 425 ? 30 : 20) : customWords.length;
 
@@ -47,17 +59,33 @@ import 'whatwg-fetch';
             const elem = document.getElementById('bubbleCloudVis');
             elem.classList.add(`party-${party}`);
 
-            cloud = BubbleCloud(elem);
+            cloud = BubbleCloud(elem, partyMap);
             cloud.setData(data.slice(0, wordCount));
+
+            if(selectedWord.length > 0) {
+                const hit = findIndex(words, d => d.word.toLowerCase() === selectedWord.toLowerCase());
+                if (hit > -1) {
+                    const word = words[hit];
+                    cloud.selectNode({ id: (word.id || hit)+1 });
+                    elem.classList.add('selection-active');
+                    if(party === 'all') {
+                        cloud.createPartyBubbles(helpers.prepareData(word));
+                    }
+                }
+            }
 
             elem.addEventListener('word-click', ev => {
                 window.open(prepareLink(ev.detail.name, params.party, customWords), '_blank');
+            });
+
+            elem.addEventListener('party-click', ev => {
+                window.open(prepareLink(selectedWord, ev.detail.id, customWords), '_blank');
             });
         });
 
     document.querySelector('.app-link').addEventListener('click', ev => {
         ev.preventDefault();
-        window.open(prepareLink(null, params.party, customWords), '_blank');
+        window.open(prepareLink(selectedWord, params.party, customWords), '_blank');
     });
 
     window.addEventListener('resize', debounce(() => {
