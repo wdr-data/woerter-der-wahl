@@ -14,7 +14,10 @@ import 'whatwg-fetch';
     const params = qs.parse(window.location.search.substr(1));
 
     const party = params.party || 'all';
-    const customWords = (params.customwords || '').replace(/\+/g, ' ').split(' ');
+    const customWords = (params.customwords || '')
+      .replace(/\+/g, ' ')
+      .split(' ')
+      .filter(w => w !== "");
 
     const wordCountGetter = () => customWords.length === 0 ? (window.innerWidth > 425 ? 30 : 20) : customWords.length;
 
