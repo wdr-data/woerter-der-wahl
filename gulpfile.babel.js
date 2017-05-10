@@ -54,6 +54,9 @@ const useminPipeline = () => $.usemin({
         () => $.cssimport({ includePaths: ['styles'] }),
         () => $.cleanCss(),
         () => $.rev()
+    ],
+    js: [
+        () => $.rev()
     ]
 });
 const htmlPipeline = () => $.htmlmin({
@@ -63,7 +66,7 @@ const htmlPipeline = () => $.htmlmin({
     removeComments: true,
     removeScriptTypeAttributes: true
 });
-gulp.task('embed', ['styles'], () => gulp.src('embed.html')
+gulp.task('embed', ['scripts:legacy', 'styles'], () => gulp.src('embed.html')
     .pipe(useminPipeline())
     .pipe($.if('*.html', htmlPipeline()))
     .pipe(gulp.dest(dist))
@@ -74,7 +77,7 @@ gulp.task('fonts:develop', () => dlFonts('fonts'));
 
 gulp.task('scripts:default', () => gulp.src(['lib/index.js'])
     .pipe(webpackStream(webpackConfig, webpack))
-    .pipe(gulp.dest(dist))
+    .pipe(gulp.dest('.tmp'))
 );
 
 gulp.task('scripts:legacy', () => {
@@ -101,8 +104,8 @@ gulp.task('scripts:legacy', () => {
     return gulp.src(['lib/index.js', 'embed.js'])
         .pipe(webpackStream(config, webpack))
         .pipe($.uglify())
-        .pipe($.if('lib.js', gulp.dest(distLegacy)))
-        .pipe($.if('embed.js', gulp.dest(dist)));
+        .pipe($.if('lib.js', gulp.dest(path.join('.tmp', 'legacy'))))
+        .pipe($.if('embed.js', gulp.dest('.tmp')));
 });
 
 gulp.task('scripts', ['scripts:default', 'scripts:legacy']);
@@ -152,7 +155,7 @@ const myLoadFn = function(url) {
 };
 polymerProject.analyzer.loader.load = myLoadFn.bind(polymerProject.analyzer.loader);
 
-gulp.task('elements', ['styles'], () => {
+gulp.task('elements', ['scripts', 'styles'], () => {
     const sourceStream = polymerProject.sources()
         .pipe($.if('elements/info-text.html', $.template({
             infotext: marked(fs.readFileSync('content/info.md').toString(), {breaks: true})
@@ -162,6 +165,9 @@ gulp.task('elements', ['styles'], () => {
             path: './',
             css: [
                 () => $.cssimport({ includePaths: ['styles'] }),
+                () => $.rev()
+            ],
+            js: [
                 () => $.rev()
             ]
         }))
